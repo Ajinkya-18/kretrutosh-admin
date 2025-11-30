@@ -8,6 +8,11 @@ const authProvider: AuthProvider = {
       if (providerName) {
         const { data, error } = await supabaseClient.auth.signInWithOAuth({
           provider: providerName,
+          options: {
+            // This tells Supabase: "Redirect back to the current domain"
+            // On localhost, this is localhost:5173. On Vercel, it's your-app.vercel.app
+            redirectTo: window.location.origin,
+          },
         });
 
         if (error) {
