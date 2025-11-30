@@ -11,13 +11,13 @@ export const BlogCreate = () => {
     try {
       const fileName = `blogs/${Date.now()}-${file.name}`;
       const { error } = await supabaseClient.storage
-        .from("public-assets")
+        .from("website-assets")
         .upload(fileName, file);
 
       if (error) throw error;
 
       const { data } = supabaseClient.storage
-        .from("public-assets")
+        .from("website-assets")
         .getPublicUrl(fileName);
 
       const url = data.publicUrl;
