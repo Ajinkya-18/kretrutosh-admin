@@ -5,12 +5,23 @@ import { supabaseClient } from "../../utility/supabaseClient";
 import dayjs from "dayjs";
 
 export const BlogEdit = () => {
-  const { formProps, saveButtonProps } = useForm();
+  const { formProps, saveButtonProps, form, queryResult } = useForm();
 
-  // Convert date string to dayjs object for the DatePicker
+  // Handle existing data for the DatePicker
+  const blogData = queryResult?.data?.data;
   if (formProps.initialValues?.publish_date) {
     formProps.initialValues.publish_date = dayjs(formProps.initialValues.publish_date);
   }
+
+  // Create a default fileList to show the existing image
+  const defaultFileList = blogData?.image_url ? [
+    {
+      uid: '-1',
+      name: 'current-image',
+      status: 'done',
+      url: blogData.image_url,
+    }
+  ] : [];
 
   const customRequest = async ({ file, onSuccess, onError }: any) => {
     try {
@@ -25,7 +36,12 @@ export const BlogEdit = () => {
         .from("public-assets")
         .getPublicUrl(fileName);
 
-      onSuccess(data.publicUrl);
+      const url = data.publicUrl;
+
+      // Manually update the hidden form field
+      form.setFieldValue("image_url", url);
+      
+      onSuccess(url);
     } catch (error) {
       onError(error);
     }
@@ -46,19 +62,21 @@ export const BlogEdit = () => {
         <Form.Item label="Publish Date" name="publish_date">
           <DatePicker style={{ width: "100%" }} />
         </Form.Item>
-        <Form.Item
-          label="Cover Image"
-          name="image_url"
-          getValueFromEvent={(e) => {
-            if (Array.isArray(e)) return e;
-            return e?.fileList[0]?.response;
-          }}
-        >
+
+        {/* Hidden field to store the URL string */}
+        <Form.Item name="image_url" hidden>
+          <Input />
+        </Form.Item>
+
+        {/* Upload UI */}
+        <Form.Item label="Cover Image">
           <Upload.Dragger
             name="file"
             customRequest={customRequest}
             listType="picture"
             maxCount={1}
+            defaultFileList={defaultFileList as any} // Show existing image
+            key={defaultFileList.length > 0 ? "loaded" : "empty"} // Force re-render when data loads
           >
             <p className="ant-upload-drag-icon"><UploadOutlined /></p>
             <p className="ant-upload-text">Upload new image to replace current</p>
