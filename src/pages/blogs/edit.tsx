@@ -1,5 +1,5 @@
 import { Edit, useForm } from "@refinedev/antd";
-import { Form, Input, DatePicker, Upload } from "antd";
+import { Form, Input, DatePicker, Upload, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { supabaseClient } from "../../utility/supabaseClient";
 import dayjs from "dayjs";
@@ -7,13 +7,13 @@ import dayjs from "dayjs";
 export const BlogEdit = () => {
   const { formProps, saveButtonProps, form, queryResult } = useForm();
 
-  // Handle existing data for the DatePicker
+  // Handle existing data
   const blogData = queryResult?.data?.data;
   if (formProps.initialValues?.publish_date) {
     formProps.initialValues.publish_date = dayjs(formProps.initialValues.publish_date);
   }
 
-  // Create a default fileList to show the existing image
+  // Show existing image in the upload list
   const defaultFileList = blogData?.image_url ? [
     {
       uid: '-1',
@@ -25,10 +25,11 @@ export const BlogEdit = () => {
 
   const customRequest = async ({ file, onSuccess, onError }: any) => {
     try {
-      const fileName = `blogs/${Date.now()}-${file.name}`;
+      const fileName = `blogs/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
+      
       const { error } = await supabaseClient.storage
-        .from("website-assets")
-        .upload(fileName, file);
+        .from("website-assets") // Correct Bucket
+        .upload(fileName, file, { cacheControl: '3600', upsert: false });
 
       if (error) throw error;
 
@@ -37,12 +38,11 @@ export const BlogEdit = () => {
         .getPublicUrl(fileName);
 
       const url = data.publicUrl;
-
-      // Manually update the hidden form field
-      form.setFieldValue("image_url", url);
-      
+      form.setFieldValue("image_url", url); // Manual Set
       onSuccess(url);
-    } catch (error) {
+      message.success("Image uploaded!");
+    } catch (error: any) {
+      message.error("Upload failed: " + error.message);
       onError(error);
     }
   };
@@ -63,23 +63,20 @@ export const BlogEdit = () => {
           <DatePicker style={{ width: "100%" }} />
         </Form.Item>
 
-        {/* Hidden field to store the URL string */}
-        <Form.Item name="image_url" hidden>
-          <Input />
-        </Form.Item>
+        {/* Hidden Field */}
+        <Form.Item name="image_url" hidden><Input /></Form.Item>
 
-        {/* Upload UI */}
         <Form.Item label="Cover Image">
           <Upload.Dragger
             name="file"
             customRequest={customRequest}
             listType="picture"
             maxCount={1}
-            defaultFileList={defaultFileList as any} // Show existing image
-            key={defaultFileList.length > 0 ? "loaded" : "empty"} // Force re-render when data loads
+            defaultFileList={defaultFileList as any}
+            key={defaultFileList.length > 0 ? "loaded" : "empty"}
           >
             <p className="ant-upload-drag-icon"><UploadOutlined /></p>
-            <p className="ant-upload-text">Upload new image to replace current</p>
+            <p className="ant-upload-text">Upload new image to replace</p>
           </Upload.Dragger>
         </Form.Item>
       </Form>

@@ -1,69 +1,45 @@
 import { Create, useForm } from "@refinedev/antd";
-import { Form, Input, Upload } from "antd";
+import { Form, Input, Upload, message } from "antd";
 import { UploadOutlined, FilePdfOutlined } from "@ant-design/icons";
 import { supabaseClient } from "../../utility/supabaseClient";
 
 export const WhitepaperCreate = () => {
-  const { formProps, saveButtonProps } = useForm();
+  const { formProps, saveButtonProps, form } = useForm();
 
-  // Helper to create the upload function dynamically based on folder
-  const uploadToSupabase = (folder: string) => async ({ file, onSuccess, onError }: any) => {
+  const uploadToSupabase = (folder: string, fieldName: string) => async ({ file, onSuccess, onError }: any) => {
     try {
-      const fileName = `whitepapers/${folder}/${Date.now()}-${file.name}`;
-      const { error } = await supabaseClient.storage.from("public-assets").upload(fileName, file);
+      const fileName = `whitepapers/${folder}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
+      const { error } = await supabaseClient.storage.from("website-assets").upload(fileName, file);
       if (error) throw error;
-      const { data } = supabaseClient.storage.from("public-assets").getPublicUrl(fileName);
+      const { data } = supabaseClient.storage.from("website-assets").getPublicUrl(fileName);
+      
+      form.setFieldValue(fieldName, data.publicUrl); // Dynamic Field Set
       onSuccess(data.publicUrl);
-    } catch (error) { onError(error); }
+      message.success(`${folder === 'covers' ? 'Image' : 'PDF'} uploaded!`);
+    } catch (error: any) { onError(error); message.error("Upload failed"); }
   };
 
   return (
     <Create saveButtonProps={saveButtonProps}>
       <Form {...formProps} layout="vertical">
-        <Form.Item label="Title" name="title" rules={[{ required: true }]}>
-          <Input />
-        </Form.Item>
-        <Form.Item label="Description" name="description">
-          <Input.TextArea rows={3} />
-        </Form.Item>
+        <Form.Item label="Title" name="title" rules={[{ required: true }]}><Input /></Form.Item>
+        <Form.Item label="Description" name="description"><Input.TextArea rows={3} /></Form.Item>
 
-        {/* 1. Cover Image Upload */}
-        <Form.Item
-          label="Cover Image"
-          name="cover_image_url"
-          getValueFromEvent={(e) => {
-            if (Array.isArray(e)) return e;
-            return e?.fileList[0]?.response;
-          }}
-        >
-          <Upload.Dragger 
-            name="file" 
-            customRequest={uploadToSupabase("covers")} // Saves to whitepapers/covers/
-            listType="picture" 
-            maxCount={1}
-          >
+        {/* Cover Image */}
+        <Form.Item name="cover_image_url" hidden><Input /></Form.Item>
+        <Form.Item label="Cover Image">
+          <Upload.Dragger name="file" customRequest={uploadToSupabase("covers", "cover_image_url")} listType="picture" maxCount={1}>
             <p className="ant-upload-drag-icon"><UploadOutlined /></p>
-            <p className="ant-upload-text">Upload Cover Image</p>
+            <p className="ant-upload-text">Upload Cover</p>
           </Upload.Dragger>
         </Form.Item>
 
-        {/* 2. PDF File Upload */}
-        <Form.Item
-          label="PDF File"
-          name="download_url"
-          getValueFromEvent={(e) => {
-            if (Array.isArray(e)) return e;
-            return e?.fileList[0]?.response;
-          }}
-        >
-          <Upload.Dragger 
-            name="file" 
-            customRequest={uploadToSupabase("docs")} // Saves to whitepapers/docs/
-            maxCount={1}
-            accept=".pdf"
-          >
+        {/* PDF */}
+        <Form.Item name="download_url" hidden><Input /></Form.Item>
+        <Form.Item label="PDF File">
+          <Upload.Dragger name="file" customRequest={uploadToSupabase("docs", "download_url")} maxCount={1} accept=".pdf">
             <p className="ant-upload-drag-icon"><FilePdfOutlined /></p>
-            <p className="ant-upload-text">Upload PDF Document</p>
+            <p className="ant-upload-text">Upload PDF</p>
           </Upload.Dragger>
         </Form.Item>
       </Form>
