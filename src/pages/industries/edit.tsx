@@ -8,19 +8,29 @@ export const IndustryEdit = () => {
     <Edit saveButtonProps={saveButtonProps}>
       <Form {...formProps} layout="vertical">
         <div style={{ display: "flex", gap: "16px" }}>
-          <Form.Item label="Industry Title" name="title" style={{ flex: 1 }} rules={[{ required: true }]}>
+          <Form.Item 
+            label="Industry Title" 
+            name="title" 
+            style={{ flex: 1 }} 
+            rules={[{ required: true, message: "Title is required" }]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item label="URL Slug" name="slug" style={{ flex: 1 }} rules={[{ required: true }]}>
+          <Form.Item 
+            label="URL Slug" 
+            name="slug" 
+            style={{ flex: 1 }} 
+            rules={[{ required: true, message: "Slug is required" }]}
+          >
             <Input />
           </Form.Item>
         </div>
 
-        <Form.Item label="Subtitle" name="subtitle">
+        <Form.Item label="Subtitle" name="subtitle" rules={[{ required: true }]}>
           <Input />
         </Form.Item>
 
-        <Form.Item label="Icon Name (Lucide)" name="icon_name">
+        <Form.Item label="Icon Name (Lucide React)" name="icon_name">
           <Input />
         </Form.Item>
 
@@ -28,20 +38,20 @@ export const IndustryEdit = () => {
           <Input.TextArea rows={3} />
         </Form.Item>
 
-        <Form.Item label="Our Approach" name="approach">
-          <Input.TextArea rows={3} />
+        <Form.Item label="Our Tailored Approach" name="approach">
+          <Input.TextArea rows={4} />
         </Form.Item>
 
         <Form.Item label="Industry Challenges" name="challenges">
-          <Select mode="tags" tokenSeparators={[',']} />
+          <Select mode="tags" tokenSeparators={[',']} open={false} />
         </Form.Item>
 
         <Form.Item label="Impact Outcomes" name="outcomes">
-          <Select mode="tags" tokenSeparators={[',']} />
+          <Select mode="tags" tokenSeparators={[',']} open={false} />
         </Form.Item>
 
         <Form.Item label="Related Framework Slugs" name="framework_slugs">
-          <Select mode="tags" tokenSeparators={[',']} />
+          <Select mode="tags" tokenSeparators={[',']} open={false} />
         </Form.Item>
       </Form>
     </Edit>
