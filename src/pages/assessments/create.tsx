@@ -1,5 +1,5 @@
 import { Create, useForm } from "@refinedev/antd";
-import { Form, Input, Select } from "antd";
+import { Form, Input } from "antd";
 
 export const AssessmentCreate = () => {
   const { formProps, saveButtonProps } = useForm();
@@ -7,20 +7,26 @@ export const AssessmentCreate = () => {
   return (
     <Create saveButtonProps={saveButtonProps}>
       <Form {...formProps} layout="vertical">
-        <Form.Item label="Title" name="title" rules={[{ required: true }]}>
+        <Form.Item 
+          label="Title" 
+          name="title" 
+          rules={[{ required: true, message: "Title is required" }]}
+        >
           <Input placeholder="e.g. CX Maturity Assessment" />
         </Form.Item>
+        
         <Form.Item label="Description" name="description">
-          <Input.TextArea rows={3} />
+          <Input.TextArea rows={3} placeholder="Briefly describe what this assessment measures..." />
         </Form.Item>
+        
         <Form.Item 
           label="External Link (Microsoft Form URL)" 
           name="external_link"
-          rules={[{ required: true }]}
+          rules={[{ required: true, message: "Please provide the form link" }]}
         >
-          <Input />
+          <Input placeholder="https://forms.office.com/..." />
         </Form.Item>
-        {/* Helper for icons - Client types the name found in Lucide React */}
+        
         <Form.Item 
           label="Icon Name (Lucide React)" 
           name="icon_name"

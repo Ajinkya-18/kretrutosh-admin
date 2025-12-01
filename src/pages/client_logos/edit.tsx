@@ -5,22 +5,19 @@ import { supabaseClient } from "../../utility/supabaseClient";
 
 export const ClientLogoEdit = () => {
   const { formProps, saveButtonProps, form, queryResult } = useForm();
-  const logoData = queryResult?.data?.data;
-
-  const defaultFileList = logoData?.logo_url ? [
-    { uid: '-1', name: 'current-logo', status: 'done', url: logoData.logo_url }
+  const data = queryResult?.data?.data;
+  
+  const defaultFileList = data?.logo_url ? [
+    { uid: '-1', name: 'current-logo', status: 'done', url: data.logo_url }
   ] : [];
 
   const customRequest = async ({ file, onSuccess, onError }: any) => {
     try {
       const fileName = `logos/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
-      const { error } = await supabaseClient.storage
-        .from("website-assets")
-        .upload(fileName, file);
-
+      const { error } = await supabaseClient.storage.from("website-assets").upload(fileName, file);
       if (error) throw error;
-
       const { data } = supabaseClient.storage.from("website-assets").getPublicUrl(fileName);
+      
       form.setFieldValue("logo_url", data.publicUrl);
       onSuccess(data.publicUrl);
       message.success("Logo updated!");
@@ -38,18 +35,25 @@ export const ClientLogoEdit = () => {
         </Form.Item>
         
         <Form.Item name="logo_url" hidden><Input /></Form.Item>
-
-        <Form.Item label="Logo Image">
+        
+        <Form.Item 
+          label="Logo Image"
+          getValueFromEvent={(e) => {
+            if (typeof e === 'string') return e;
+            if (Array.isArray(e)) return e.length > 0 ? e[0].response : null;
+            return e?.fileList && e.fileList.length > 0 ? e.fileList[0].response : null;
+          }}
+        >
           <Upload.Dragger 
             name="file" 
             customRequest={customRequest} 
             listType="picture" 
-            maxCount={1}
+            maxCount={1} 
             defaultFileList={defaultFileList as any}
-            key={defaultFileList.length > 0 ? "loaded" : "empty"}
+            key={defaultFileList.length ? "loaded" : "empty"}
           >
             <p className="ant-upload-drag-icon"><UploadOutlined /></p>
-            <p className="ant-upload-text">Upload new logo to replace</p>
+            <p className="ant-upload-text">Replace Logo</p>
           </Upload.Dragger>
         </Form.Item>
       </Form>

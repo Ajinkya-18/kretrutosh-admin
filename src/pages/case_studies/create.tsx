@@ -7,16 +7,28 @@ export const CaseStudyCreate = () => {
   return (
     <Create saveButtonProps={saveButtonProps}>
       <Form {...formProps} layout="vertical">
-        <Form.Item label="Case Study Title" name="title" rules={[{ required: true }]}>
+        <Form.Item 
+          label="Case Study Title" 
+          name="title" 
+          rules={[{ required: true, message: "Title is required" }]}
+        >
           <Input placeholder="e.g. Digital Transformation Success" />
         </Form.Item>
 
         <div style={{ display: "flex", gap: "16px" }}>
-          <Form.Item label="Client Name" name="client" style={{ flex: 1 }}>
-            <Input />
+          <Form.Item 
+            label="Client Name" 
+            name="client_name" 
+            style={{ flex: 1 }}
+          >
+            <Input placeholder="e.g. Insular Life" />
           </Form.Item>
-          <Form.Item label="Industry" name="industry" style={{ flex: 1 }}>
-            <Input />
+          <Form.Item 
+            label="Industry" 
+            name="industry" 
+            style={{ flex: 1 }}
+          >
+            <Input placeholder="e.g. Insurance" />
           </Form.Item>
         </div>
 
@@ -34,14 +46,25 @@ export const CaseStudyCreate = () => {
           name="results"
           help="Example: '40% cost reduction', '3x faster deployment'"
         >
-          <Select mode="tags" placeholder="Type result and press Enter" tokenSeparators={[',']} />
+          <Select 
+            mode="tags" 
+            placeholder="Type result and press Enter" 
+            tokenSeparators={[',']} 
+            open={false} 
+          />
         </Form.Item>
 
         <Form.Item 
           label="Tags" 
           name="tags"
+          help="Example: 'Digital Transformation', 'Cloud Migration'"
         >
-          <Select mode="tags" placeholder="e.g. Cloud, Agile, Transformation" tokenSeparators={[',']} />
+          <Select 
+            mode="tags" 
+            placeholder="Type tag and press Enter" 
+            tokenSeparators={[',']} 
+            open={false} 
+          />
         </Form.Item>
       </Form>
     </Create>

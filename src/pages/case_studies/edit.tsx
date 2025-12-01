@@ -7,12 +7,16 @@ export const CaseStudyEdit = () => {
   return (
     <Edit saveButtonProps={saveButtonProps}>
       <Form {...formProps} layout="vertical">
-        <Form.Item label="Case Study Title" name="title" rules={[{ required: true }]}>
+        <Form.Item 
+          label="Case Study Title" 
+          name="title" 
+          rules={[{ required: true, message: "Title is required" }]}
+        >
           <Input />
         </Form.Item>
 
         <div style={{ display: "flex", gap: "16px" }}>
-          <Form.Item label="Client Name" name="client" style={{ flex: 1 }}>
+          <Form.Item label="Client Name" name="client_name" style={{ flex: 1 }}>
             <Input />
           </Form.Item>
           <Form.Item label="Industry" name="industry" style={{ flex: 1 }}>
@@ -28,12 +32,20 @@ export const CaseStudyEdit = () => {
           <Input.TextArea rows={3} />
         </Form.Item>
 
-        <Form.Item label="Key Results" name="results">
-          <Select mode="tags" placeholder="Type result and press Enter" tokenSeparators={[',']} />
+        <Form.Item 
+          label="Key Results" 
+          name="results"
+          help="Press Enter to add new items"
+        >
+          <Select mode="tags" tokenSeparators={[',']} open={false} />
         </Form.Item>
 
-        <Form.Item label="Tags" name="tags">
-          <Select mode="tags" placeholder="Type tag and press Enter" tokenSeparators={[',']} />
+        <Form.Item 
+          label="Tags" 
+          name="tags"
+          help="Press Enter to add new tags"
+        >
+          <Select mode="tags" tokenSeparators={[',']} open={false} />
         </Form.Item>
       </Form>
     </Edit>
