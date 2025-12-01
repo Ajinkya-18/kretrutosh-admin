@@ -52,6 +52,10 @@ import { IndustryList } from "./pages/industries/list";
 import { IndustryCreate } from "./pages/industries/create";
 import { IndustryEdit } from "./pages/industries/edit";
 
+import { WebsiteContentList } from "./pages/website_content/list";
+import { WebsiteContentCreate } from "./pages/website_content/create";
+import { WebsiteContentEdit } from "./pages/website_content/edit";
+
 function App() {
   console.log("App.tsx: App component rendering");
   
@@ -65,6 +69,13 @@ function App() {
           routerProvider={routerBindings}
           notificationProvider={useNotificationProvider}
           resources={[
+          {
+            name: "website_content",
+            list: "/website-content",
+            create: "/website-content/create",
+            edit: "/website-content/edit/:id",
+            meta: { label: "Site Text & Labels" }
+          },
           {
             name: "pages",
             list: "/pages",
@@ -192,6 +203,12 @@ function App() {
                 <Route index element={<PageList />} />
                 <Route path="create" element={<PageCreate />} />
                 <Route path="edit/:id" element={<PageEdit />} />
+              </Route>
+
+              <Route path="/website-content">
+                <Route index element={<WebsiteContentList />} />
+                <Route path="create" element={<WebsiteContentCreate />} />
+                <Route path="edit/:id" element={<WebsiteContentEdit />} />
               </Route>
 
               <Route path="/videos">
