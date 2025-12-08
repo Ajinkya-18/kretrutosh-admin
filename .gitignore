@@ -26,3 +26,4 @@ _.sln
 \*.sw?
 
 .env
+/new-google-oauth-credentials-for-nocturnal-content-automator.json
