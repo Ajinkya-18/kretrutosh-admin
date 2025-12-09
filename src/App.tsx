@@ -77,6 +77,18 @@ import { UIComponentsList } from "./pages/ui_components/list";
 import { UIComponentsCreate } from "./pages/ui_components/create";
 import { UIComponentsEdit } from "./pages/ui_components/edit";
 
+
+import { SectionsFrameworkDetailsList } from "./pages/sections_framework_details/list";
+import { SectionsFrameworkDetailsCreate } from "./pages/sections_framework_details/create";
+import { SectionsFrameworkDetailsEdit } from "./pages/sections_framework_details/edit";
+
+import { SectionsIndustryDetailsList } from "./pages/sections_industry_details/list";
+import { SectionsIndustryDetailsCreate } from "./pages/sections_industry_details/create";
+import { SectionsIndustryDetailsEdit } from "./pages/sections_industry_details/edit";
+
+import { SectionsAssessmentDetailsList } from "./pages/sections_assessment_details/list";
+import { SectionsAssessmentDetailsCreate } from "./pages/sections_assessment_details/create";
+import { SectionsAssessmentDetailsEdit } from "./pages/sections_assessment_details/edit";
 // Start App
 function App() {
   console.log("App.tsx: App component rendering");
@@ -127,11 +139,32 @@ function App() {
             meta: { label: "Service Page Builder" }
           },
           {
+            name: "sections_framework_details",
+            list: "/sections_framework_details",
+            edit: "/sections_framework_details/edit/:id",
+            create: "/sections_framework_details/create",
+            meta: { label: "Framework Details Builder" }
+          },
+          {
+            name: "sections_industry_details",
+            list: "/sections_industry_details",
+            edit: "/sections_industry_details/edit/:id",
+            create: "/sections_industry_details/create",
+            meta: { label: "Industry Details Builder" }
+          },
+          {
+            name: "sections_assessment_details",
+            list: "/sections_assessment_details",
+            edit: "/sections_assessment_details/edit/:id",
+            create: "/sections_assessment_details/create",
+            meta: { label: "Assessment Details Builder" }
+          },
+          {
             name: "sections_industries",
             list: "/sections_industries",
             edit: "/sections_industries/edit/:id",
             create: "/sections_industries/create",
-            meta: { label: "Industry Page Builder" }
+            meta: { label: "Industry Page Builder (Legacy)" }
           },
           {
             name: "ui_components",
@@ -367,6 +400,24 @@ function App() {
                   <Route index element={<UIComponentsList />} />
                   <Route path="create" element={<UIComponentsCreate />} />
                   <Route path="edit/:id" element={<UIComponentsEdit />} />
+              </Route>
+
+              <Route path="/sections_framework_details">
+                  <Route index element={<SectionsFrameworkDetailsList />} />
+                  <Route path="create" element={<SectionsFrameworkDetailsCreate />} />
+                  <Route path="edit/:id" element={<SectionsFrameworkDetailsEdit />} />
+              </Route>
+
+              <Route path="/sections_industry_details">
+                  <Route index element={<SectionsIndustryDetailsList />} />
+                  <Route path="create" element={<SectionsIndustryDetailsCreate />} />
+                  <Route path="edit/:id" element={<SectionsIndustryDetailsEdit />} />
+              </Route>
+
+              <Route path="/sections_assessment_details">
+                  <Route index element={<SectionsAssessmentDetailsList />} />
+                  <Route path="create" element={<SectionsAssessmentDetailsCreate />} />
+                  <Route path="edit/:id" element={<SectionsAssessmentDetailsEdit />} />
               </Route>
 
 
