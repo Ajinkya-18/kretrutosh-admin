@@ -14,7 +14,7 @@ export const SectionsServicesList = () => {
     sorters: {
       initial: [
         {
-          field: "service_slug",
+          field: "page_slug",
           order: "asc",
         },
         {
@@ -29,7 +29,7 @@ export const SectionsServicesList = () => {
     <List>
       <Table {...tableProps} rowKey="id">
         <Table.Column 
-            dataIndex="service_slug" 
+            dataIndex="page_slug" 
             title="Service Page"
             render={(value) => <Tag color="purple">{value}</Tag>}
             filterDropdown={(props) => (

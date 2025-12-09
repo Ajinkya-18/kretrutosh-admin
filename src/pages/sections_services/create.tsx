@@ -10,7 +10,7 @@ export const SectionsServicesCreate = () => {
           <div className="flex gap-4">
                <Form.Item
                   label="Service Slug"
-                  name="service_slug"
+                  name="page_slug"
                   className="w-1/3"
                   rules={[{ required: true }]}
               >

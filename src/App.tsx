@@ -16,9 +16,7 @@ import "./App.css";
 import authProvider from "./authProvider";
 import { supabaseClient } from "./utility";
 import { ThemedLayoutV2, ThemedSiderV2, ThemedTitleV2, AuthPage } from "@refinedev/antd";
-import { PageList } from "./pages/pages/list";
-import { PageCreate } from "./pages/pages/create";
-import { PageEdit } from "./pages/pages/edit";
+
 
 import { VideoList } from "./pages/videos/list";
 import { VideoCreate } from "./pages/videos/create";
@@ -99,12 +97,7 @@ function App() {
             edit: "/website-content/edit/:id",
             meta: { label: "Site Text & Labels" }
           },
-          {
-            name: "pages",
-            list: "/pages",
-            edit: "/pages/edit/:id",
-            meta: { label: "Page Banners" }
-          },
+
           {
             name: "sections_home",
             list: "/sections_home",
@@ -276,13 +269,9 @@ function App() {
             >
               <Route
                 index
-                element={<NavigateToResource resource="pages" />}
+                element={<NavigateToResource resource="sections_home" />}
               />
-              <Route path="/pages">
-                <Route index element={<PageList />} />
-                <Route path="create" element={<PageCreate />} />
-                <Route path="edit/:id" element={<PageEdit />} />
-              </Route>
+
 
               <Route path="/website-content">
                 <Route index element={<WebsiteContentList />} />
@@ -381,7 +370,7 @@ function App() {
               </Route>
 
 
-              <Route path="*" element={<CatchAllNavigate to="/pages" />} />
+              <Route path="*" element={<CatchAllNavigate to="/sections_home" />} />
             </Route>
           </Routes>
 

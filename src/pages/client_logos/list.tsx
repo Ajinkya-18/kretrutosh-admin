@@ -2,7 +2,17 @@ import { List, useTable, EditButton, DeleteButton } from "@refinedev/antd";
 import { Table, Space, Image } from "antd";
 
 export const ClientLogoList = () => {
-  const { tableProps } = useTable({ syncWithLocation: true });
+  const { tableProps } = useTable({
+    syncWithLocation: true,
+    sorters: {
+      initial: [
+        {
+          field: "display_order",
+          order: "asc",
+        },
+      ],
+    },
+  });
 
   return (
     <List>
