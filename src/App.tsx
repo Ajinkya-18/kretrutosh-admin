@@ -73,7 +73,7 @@ import { SectionsServicesCreate } from "./pages/sections_services/create";
 import { SectionsServicesEdit } from "./pages/sections_services/edit";
 
 import { SectionsIndustriesList } from "./pages/sections_industries/list";
-import { SectionsIndustriesCreate } => "./pages/sections_industries/create";
+import { SectionsIndustriesCreate } from "./pages/sections_industries/create";
 import { SectionsIndustriesEdit } from "./pages/sections_industries/edit";
 
 // Start App
