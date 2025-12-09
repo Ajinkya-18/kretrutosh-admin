@@ -56,6 +56,27 @@ import { WebsiteContentList } from "./pages/website_content/list";
 import { WebsiteContentCreate } from "./pages/website_content/create";
 import { WebsiteContentEdit } from "./pages/website_content/edit";
 
+import { SectionsHomeList } from "./pages/sections_home/list";
+import { SectionsHomeEdit } from "./pages/sections_home/edit";
+import { SectionsHomeCreate } from "./pages/sections_home/create";
+
+import { SectionsAboutList } from "./pages/sections_about/list";
+import { SectionsAboutCreate } from "./pages/sections_about/create";
+import { SectionsAboutEdit } from "./pages/sections_about/edit";
+
+import { SectionsContactList } from "./pages/sections_contact/list";
+import { SectionsContactCreate } from "./pages/sections_contact/create";
+import { SectionsContactEdit } from "./pages/sections_contact/edit";
+
+import { SectionsServicesList } from "./pages/sections_services/list";
+import { SectionsServicesCreate } from "./pages/sections_services/create";
+import { SectionsServicesEdit } from "./pages/sections_services/edit";
+
+import { SectionsIndustriesList } from "./pages/sections_industries/list";
+import { SectionsIndustriesCreate } => "./pages/sections_industries/create";
+import { SectionsIndustriesEdit } from "./pages/sections_industries/edit";
+
+// Start App
 function App() {
   console.log("App.tsx: App component rendering");
   
@@ -81,6 +102,41 @@ function App() {
             list: "/pages",
             edit: "/pages/edit/:id",
             meta: { label: "Page Banners" }
+          },
+          {
+            name: "sections_home",
+            list: "/sections_home",
+            edit: "/sections_home/edit/:id",
+            create: "/sections_home/create",
+            meta: { label: "Home Page Builder" }
+          },
+          {
+            name: "sections_about",
+            list: "/sections_about",
+            edit: "/sections_about/edit/:id",
+            create: "/sections_about/create",
+            meta: { label: "About Page Builder" }
+          },
+          {
+            name: "sections_contact",
+            list: "/sections_contact",
+            edit: "/sections_contact/edit/:id",
+            create: "/sections_contact/create",
+            meta: { label: "Contact Page Builder" }
+          },
+          {
+            name: "sections_services",
+            list: "/sections_services",
+            edit: "/sections_services/edit/:id",
+            create: "/sections_services/create",
+            meta: { label: "Service Page Builder" }
+          },
+          {
+            name: "sections_industries",
+            list: "/sections_industries",
+            edit: "/sections_industries/edit/:id",
+            create: "/sections_industries/create",
+            meta: { label: "Industry Page Builder" }
           },
           {
             name: "blogs",
@@ -123,6 +179,13 @@ function App() {
             create: "/client_logos/create",
             edit: "/client_logos/edit/:id",
             meta: { label: "Client Logos" }
+          },
+          {
+            name: "sections_home",
+            list: "/sections_home",
+            edit: "/sections_home/edit/:id",
+            create: "/sections_home/create",
+            meta: { label: "Home Page Builder" }
           },
           {
             name: "industries",
@@ -263,6 +326,12 @@ function App() {
                   <Route index element={<IndustryList />} />
                   <Route path="create" element={<IndustryCreate />} />
                   <Route path="edit/:id" element={<IndustryEdit />} />
+              </Route>
+
+              <Route path="/sections_home">
+                  <Route index element={<SectionsHomeList />} />
+                  <Route path="create" element={<SectionsHomeCreate />} />
+                  <Route path="edit/:id" element={<SectionsHomeEdit />} />
               </Route>
 
               <Route path="*" element={<CatchAllNavigate to="/pages" />} />
