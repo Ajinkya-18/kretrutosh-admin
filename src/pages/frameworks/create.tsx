@@ -47,7 +47,11 @@ export const FrameworkCreate = () => {
           <Input.TextArea rows={6} />
         </Form.Item>
         
-        <Form.Item label="Icon Name (Lucide)" name="icon_name" help="e.g. BarChart, Trophy">
+        <Form.Item 
+          label="Icon Name (Lucide)" 
+          name="icon_name" 
+          help={<span>Find icon names on <a href="https://lucide.dev/icons" target="_blank" rel="noreferrer">lucide.dev</a> (e.g. BarChart, Trophy)</span>}
+        >
             <Input />
         </Form.Item>
 

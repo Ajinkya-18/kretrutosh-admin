@@ -1,12 +1,23 @@
 import { Edit, useForm } from "@refinedev/antd";
-import { Form, Input, InputNumber, Select, Switch, Divider } from "antd";
+import { Form, Input, InputNumber, Select, Switch, Divider, Alert } from "antd";
 
 export const SectionsHomeEdit = () => {
-  const { formProps, saveButtonProps } = useForm();
+  const { formProps, saveButtonProps, queryResult } = useForm();
+  const record = queryResult?.data?.data;
 
   return (
     <Edit saveButtonProps={saveButtonProps}>
       <Form {...formProps} layout="vertical">
+        {record?.admin_instruction && (
+            <Alert
+                message="Admin Instruction"
+                description={record.admin_instruction}
+                type="info"
+                showIcon
+                className="mb-6"
+            />
+        )}
+
         <div className="flex gap-4">
             <Form.Item
             label="Section Key"
@@ -36,17 +47,9 @@ export const SectionsHomeEdit = () => {
              <Form.Item
                 label="Grid Columns"
                 name="grid_columns"
-                help="Controls the number of items per row (e.g. 3 cards wide)"
+                help="Controls the number of items per row (1-5)"
             >
-                <Select
-                    options={[
-                        { label: "1 Column", value: 1 },
-                        { label: "2 Columns", value: 2 },
-                        { label: "3 Columns", value: 3 },
-                        { label: "4 Columns", value: 4 },
-                        { label: "5 Columns", value: 5 },
-                    ]}
-                />
+                <InputNumber min={1} max={5} className="w-full" />
             </Form.Item>
              <Form.Item
                 label="Alignment"

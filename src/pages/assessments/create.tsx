@@ -30,7 +30,7 @@ export const AssessmentCreate = () => {
         <Form.Item 
           label="Icon Name (Lucide React)" 
           name="icon_name"
-          help="e.g. ClipboardCheck, Users, BrainCircuit"
+          help={<span>Find icon names on <a href="https://lucide.dev/icons" target="_blank" rel="noreferrer">lucide.dev</a> (e.g. ClipboardCheck, Users)</span>}
         >
           <Input placeholder="ClipboardCheck" />
         </Form.Item>
