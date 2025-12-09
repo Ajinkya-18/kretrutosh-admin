@@ -1,12 +1,22 @@
 import { Edit, useForm } from "@refinedev/antd";
-import { Form, Input, InputNumber, Select, Switch, Divider } from "antd";
+import { Form, Input, InputNumber, Select, Switch, Divider, Alert } from "antd";
 
 export const SectionsContactEdit = () => {
-  const { formProps, saveButtonProps } = useForm();
+  const { formProps, saveButtonProps, queryResult } = useForm();
+  const record = queryResult?.data?.data;
 
   return (
     <Edit saveButtonProps={saveButtonProps}>
       <Form {...formProps} layout="vertical">
+        {record?.admin_instruction && (
+            <Alert
+                message="Client Instruction"
+                description={record.admin_instruction}
+                type="info"
+                showIcon
+                className="mb-6"
+            />
+        )}
         <div className="flex gap-4">
             <Form.Item
             label="Section Key"
@@ -37,14 +47,7 @@ export const SectionsContactEdit = () => {
                 label="Grid Columns"
                 name="grid_columns"
             >
-                <Select
-                    options={[
-                        { label: "1 Column", value: 1 },
-                        { label: "2 Columns", value: 2 },
-                        { label: "3 Columns", value: 3 },
-                        { label: "4 Columns", value: 4 },
-                    ]}
-                />
+                <InputNumber min={1} max={4} className="w-full" />
             </Form.Item>
              <Form.Item
                 label="Alignment"
@@ -64,9 +67,9 @@ export const SectionsContactEdit = () => {
             >
                 <Select
                     options={[
-                        { label: "Light (White)", value: "light" },
-                        { label: "Dark (Navy)", value: "dark" },
-                        { label: "Accent", value: "accent" },
+                         {label:"Light (White)", value:"light"}, 
+                        {label:"Navy (Brand)", value:"navy"}, 
+                        {label:"Gray (Muted)", value:"gray"}
                     ]}
                 />
             </Form.Item>
@@ -86,8 +89,9 @@ export const SectionsContactEdit = () => {
           <Input.TextArea rows={2} />
         </Form.Item>
         <Form.Item
-          label="Description"
-          name="description"
+          label="Content Body"
+          name="content_body"
+          help="Rich text content"
         >
           <Input.TextArea rows={4} />
         </Form.Item>
@@ -104,3 +108,4 @@ export const SectionsContactEdit = () => {
     </Edit>
   );
 };
+
