@@ -1,6 +1,5 @@
 import { Authenticated, Refine } from "@refinedev/core";
 import { DevtoolsPanel, DevtoolsProvider } from "@refinedev/devtools";
-// import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar"; // REMOVED
 import { useNotificationProvider } from "@refinedev/antd";
 import "@refinedev/antd/dist/reset.css";
 
@@ -76,12 +75,15 @@ import { SectionsIndustriesList } from "./pages/sections_industries/list";
 import { SectionsIndustriesCreate } from "./pages/sections_industries/create";
 import { SectionsIndustriesEdit } from "./pages/sections_industries/edit";
 
+import { UIComponentsList } from "./pages/ui_components/list";
+import { UIComponentsCreate } from "./pages/ui_components/create";
+import { UIComponentsEdit } from "./pages/ui_components/edit";
+
 // Start App
 function App() {
   console.log("App.tsx: App component rendering");
   
   return (
-    // <RefineKbarProvider>  <-- REMOVED
       <DevtoolsProvider>
         <Refine
           dataProvider={dataProvider(supabaseClient)}
@@ -139,6 +141,13 @@ function App() {
             meta: { label: "Industry Page Builder" }
           },
           {
+            name: "ui_components",
+            list: "/ui_components",
+            create: "/ui_components/create",
+            edit: "/ui_components/edit/:id",
+            meta: { label: "UI Components" }
+          },
+          {
             name: "blogs",
             list: "/blogs",
             create: "/blogs/create",
@@ -181,18 +190,25 @@ function App() {
             meta: { label: "Client Logos" }
           },
           {
-            name: "sections_home",
-            list: "/sections_home",
-            edit: "/sections_home/edit/:id",
-            create: "/sections_home/create",
-            meta: { label: "Home Page Builder" }
-          },
-          {
             name: "industries",
             list: "/industries",
             create: "/industries/create",
             edit: "/industries/edit/:id",
-            meta: { label: "Industries" }
+            meta: { label: "Industries Data" }
+          },
+          {
+            name: "assessments",
+            list: "/assessments",
+            create: "/assessments/create",
+            edit: "/assessments/edit/:id",
+            meta: { label: "Assessments" }
+          },
+          {
+            name: "testimonials",
+            list: "/testimonials",
+            create: "/testimonials/create",
+            edit: "/testimonials/edit/:id",
+            meta: { label: "Testimonials" }
           }
         ]}
           options={{
@@ -334,17 +350,46 @@ function App() {
                   <Route path="edit/:id" element={<SectionsHomeEdit />} />
               </Route>
 
+              <Route path="/sections_about">
+                  <Route index element={<SectionsAboutList />} />
+                  <Route path="create" element={<SectionsAboutCreate />} />
+                  <Route path="edit/:id" element={<SectionsAboutEdit />} />
+              </Route>
+
+              <Route path="/sections_contact">
+                  <Route index element={<SectionsContactList />} />
+                  <Route path="create" element={<SectionsContactCreate />} />
+                  <Route path="edit/:id" element={<SectionsContactEdit />} />
+              </Route>
+
+              <Route path="/sections_services">
+                  <Route index element={<SectionsServicesList />} />
+                  <Route path="create" element={<SectionsServicesCreate />} />
+                  <Route path="edit/:id" element={<SectionsServicesEdit />} />
+              </Route>
+
+              <Route path="/sections_industries">
+                  <Route index element={<SectionsIndustriesList />} />
+                  <Route path="create" element={<SectionsIndustriesCreate />} />
+                  <Route path="edit/:id" element={<SectionsIndustriesEdit />} />
+              </Route>
+
+              <Route path="/ui_components">
+                  <Route index element={<UIComponentsList />} />
+                  <Route path="create" element={<UIComponentsCreate />} />
+                  <Route path="edit/:id" element={<UIComponentsEdit />} />
+              </Route>
+
+
               <Route path="*" element={<CatchAllNavigate to="/pages" />} />
             </Route>
           </Routes>
 
-          {/* <RefineKbar /> */} 
           <UnsavedChangesNotifier />
           <DocumentTitleHandler />
         </Refine>
         <DevtoolsPanel />
       </DevtoolsProvider>
-    // </RefineKbarProvider>
   );
 }
 
