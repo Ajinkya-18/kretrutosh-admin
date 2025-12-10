@@ -10,7 +10,7 @@ export const CaseStudyEdit = () => {
         <Form.Item 
           label="Case Study Title" 
           name="title" 
-          rules={[{ required: true, message: "Title is required" }]}
+          rules={[{ required: true, message: "Title is required" }]}>
           <Input />
         </Form.Item>
 
