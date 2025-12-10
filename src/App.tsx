@@ -92,8 +92,6 @@ import { PagesList } from "./pages/pages/list";
 import { PagesEdit } from "./pages/pages/edit";
 // Start App
 function App() {
-  console.log("App.tsx: App component rendering");
-  
   return (
       <DevtoolsProvider>
         <Refine

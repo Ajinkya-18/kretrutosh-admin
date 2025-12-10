@@ -3,8 +3,6 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom"; // Import BrowserRouter here
 import App from "./App";
 
-console.log("Index.tsx loaded - Starting App mount");
-
 const container = document.getElementById("root") as HTMLElement;
 const root = createRoot(container);
 
