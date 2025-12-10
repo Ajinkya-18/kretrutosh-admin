@@ -1,126 +1,114 @@
 import { Edit, useForm } from "@refinedev/antd";
-import { Form, Input, InputNumber, Select, Switch, Divider, Alert } from "antd";
+import { Form, Input, Select, InputNumber, Switch, Alert, Button } from "antd";
+import { Eye } from "lucide-react";
 
 export const SectionsHomeEdit = () => {
   const { formProps, saveButtonProps, queryResult } = useForm();
   const record = queryResult?.data?.data;
 
+  const adminInstruction = record?.admin_instruction;
+
   return (
-    <Edit saveButtonProps={saveButtonProps}>
+    <Edit 
+        saveButtonProps={saveButtonProps}
+        headerButtons={({ defaultButtons }) => (
+            <>
+                {defaultButtons}
+                <Button 
+                    type="primary" 
+                    ghost 
+                    icon={<Eye size={16} />} 
+                    onClick={() => window.open(`https://kretrutosh.com/`, '_blank')}
+                >
+                    View Live Page
+                </Button>
+            </>
+        )}
+    >
       <Form {...formProps} layout="vertical">
-        {record?.admin_instruction && (
-            <Alert
-                message="Admin Instruction"
-                description={record.admin_instruction}
+        {adminInstruction && (
+            <Alert 
+                message="Editor Instructions"
+                description={adminInstruction}
                 type="info"
                 showIcon
-                className="mb-6"
+                className="mb-6 border-blue-200 bg-blue-50"
             />
         )}
 
-        <div className="flex gap-4">
-            <Form.Item
-            label="Section Key"
-            name="section_key"
-            className="w-1/3"
-            >
-            <Input disabled />
+        <div className="grid grid-cols-2 gap-6 bg-gray-50 p-4 rounded-lg mb-6 border border-gray-200">
+            <Form.Item label="Section Key (ID)" name="section_key">
+                <Input disabled className="font-mono text-gray-500" />
             </Form.Item>
-            <Form.Item
-            label="Order"
-            name="display_order"
-            className="w-1/4"
-            >
-            <InputNumber />
-            </Form.Item>
-            <Form.Item
-            label="Visible"
-            name="is_visible"
-            valuePropName="checked"
-            >
-            <Switch />
+            <Form.Item label="Page (Slug)" name="page_slug">
+                <Input disabled className="font-mono text-gray-500" />
             </Form.Item>
         </div>
 
-        <Divider orientation="left">Layout Control</Divider>
-        <div className="grid grid-cols-3 gap-4">
-             <Form.Item
-                label="Grid Columns"
-                name="grid_columns"
-                help="Controls the number of items per row (1-5)"
-            >
-                <InputNumber min={1} max={5} className="w-full" />
+        <Form.Item 
+            label="Section Title" 
+            name="title" 
+            rules={[{ required: true }]}
+            help="Keep titles concise for better impact."
+        >
+          <Input size="large" className="font-bold" />
+        </Form.Item>
+
+        <Form.Item 
+            label="Subtitle / Description" 
+            name="subtitle"
+        >
+          <Input.TextArea rows={2} showCount maxLength={200} />
+        </Form.Item>
+
+        <Form.Item 
+            label="Main Content Body" 
+            name="content_body"
+            help="For lists, use new lines or bullet points if instructed."
+        >
+          <Input.TextArea rows={6} />
+        </Form.Item>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Form.Item label="Layout Structure" name="grid_columns">
+                <Select>
+                    <Select.Option value={1}>Full Width (1 Col)</Select.Option>
+                    <Select.Option value={2}>Split / Side-by-Side (2 Cols)</Select.Option>
+                    <Select.Option value={3}>Standard Grid (3 Cols)</Select.Option>
+                    <Select.Option value={4}>Dense Grid (4 Cols)</Select.Option>
+                </Select>
             </Form.Item>
-             <Form.Item
-                label="Alignment"
-                name="alignment"
-            >
-                <Select
-                    options={[
-                        { label: "Left Aligned", value: "left" },
-                        { label: "Center Aligned", value: "center" },
-                        { label: "Right Aligned", value: "right" },
-                    ]}
-                />
+
+            <Form.Item label="Text Alignment" name="alignment">
+                <Select>
+                    <Select.Option value="left">Left Aligned</Select.Option>
+                    <Select.Option value="center">Centered</Select.Option>
+                    <Select.Option value="right">Right Aligned</Select.Option>
+                </Select>
             </Form.Item>
-            <Form.Item
-                label="Background Theme"
-                name="bg_theme"
-            >
-                <Select
-                    options={[
-                        { label: "Light (White)", value: "light" },
-                        { label: "Dark (Navy)", value: "navy" },
-                        { label: "Muted (Grey)", value: "muted" },
-                    ]}
-                />
+
+            <Form.Item label="Background Color" name="bg_theme">
+                <Select>
+                    <Select.Option value="light">White / Default</Select.Option>
+                    <Select.Option value="navy">Navy (Brand Dark)</Select.Option>
+                    <Select.Option value="gray">Light Gray (Subtle)</Select.Option>
+                </Select>
             </Form.Item>
         </div>
 
-        <Divider orientation="left">Content</Divider>
-        <Form.Item
-          label="Badge / Tag"
-          name="badge"
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          label="Title"
-          name="title"
-          rules={[{ required: true }]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          label="Subtitle"
-          name="subtitle"
-        >
-          <Input.TextArea rows={2} />
-        </Form.Item>
-        <Form.Item
-          label="Main Description"
-          name="description"
-        >
-          <Input.TextArea rows={4} />
-        </Form.Item>
-
-        <Divider orientation="left">Call to Actions</Divider>
-        <div className="grid grid-cols-2 gap-4">
-            <Form.Item label="Primary CTA Text" name="primary_cta_text"><Input /></Form.Item>
-            <Form.Item label="Primary CTA Link" name="primary_cta_link"><Input /></Form.Item>
-            <Form.Item label="Secondary CTA Text" name="secondary_cta_text"><Input /></Form.Item>
-            <Form.Item label="Secondary CTA Link" name="secondary_cta_link"><Input /></Form.Item>
+        <div className="grid grid-cols-2 gap-6">
+             <Form.Item label="Link / Button Text" name="primary_cta_text"><Input /></Form.Item>
+             <Form.Item label="Link URL" name="primary_cta_link"><Input /></Form.Item>
         </div>
-        
-        <Divider orientation="left">Advanced Data (JSON)</Divider>
-        <Form.Item
-            label="Specific Data (JSON)"
-            name="specific_data"
-            help="For complex lists like 'motions' or 'outcomes'"
-        >
-             {/* Simple Text Area for JSON for now. Ideally use a JSON editor */}
-             <Input.TextArea rows={6} disabled style={{ fontFamily: 'monospace' }} />
-        </Form.Item>
+
+        <div className="grid grid-cols-2 gap-6">
+            <Form.Item label="Display Order" name="display_order">
+                <InputNumber className="w-full" />
+            </Form.Item>
+            <Form.Item label="Visible on Site?" name="is_visible" valuePropName="checked">
+                <Switch />
+            </Form.Item>
+        </div>
       </Form>
     </Edit>
   );

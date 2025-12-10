@@ -87,6 +87,9 @@ import { SectionsIndustryDetailsEdit } from "./pages/sections_industry_details/e
 import { SectionsAssessmentDetailsList } from "./pages/sections_assessment_details/list";
 import { SectionsAssessmentDetailsCreate } from "./pages/sections_assessment_details/create";
 import { SectionsAssessmentDetailsEdit } from "./pages/sections_assessment_details/edit";
+
+import { PagesList } from "./pages/pages/list";
+import { PagesEdit } from "./pages/pages/edit";
 // Start App
 function App() {
   console.log("App.tsx: App component rendering");
@@ -100,6 +103,12 @@ function App() {
           routerProvider={routerBindings}
           notificationProvider={useNotificationProvider}
           resources={[
+          {
+            name: "pages",
+            list: "/pages",
+            edit: "/pages/edit/:id",
+            meta: { label: "Page SEO & Hero Manager" }
+          },
           {
             name: "website_content",
             list: "/website-content",
@@ -302,6 +311,11 @@ function App() {
                 <Route index element={<WebsiteContentList />} />
                 <Route path="create" element={<WebsiteContentCreate />} />
                 <Route path="edit/:id" element={<WebsiteContentEdit />} />
+              </Route>
+              
+              <Route path="/pages">
+                  <Route index element={<PagesList />} />
+                  <Route path="edit/:id" element={<PagesEdit />} />
               </Route>
 
               <Route path="/videos">

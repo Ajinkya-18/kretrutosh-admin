@@ -1,74 +1,106 @@
 import { Edit, useForm } from "@refinedev/antd";
-import { Form, Input, InputNumber, Select, Switch, Divider } from "antd";
+import { Form, Input, Select, InputNumber, Switch, Alert, Button } from "antd";
+import { Eye } from "lucide-react";
 
 export const SectionsIndustryDetailsEdit = () => {
-    const { formProps, saveButtonProps } = useForm();
-  
-    return (
-      <Edit saveButtonProps={saveButtonProps}>
-        <Form {...formProps} layout="vertical">
-           <div className="flex gap-4">
-               <Form.Item
-                  label="Industry Slug (Parent)"
-                  name="parent_slug"
-                  className="w-1/3"
-                  rules={[{ required: true }]}
-              >
-                  <Input placeholder="e.g. retail" />
-              </Form.Item>
-              <Form.Item
-                  label="Section Key"
-                  name="section_key"
-                  rules={[{ required: true }]}
-                  className="w-1/3"
-              >
-                  <Input placeholder="e.g. challenges" />
-              </Form.Item>
-               <Form.Item
-                  label="Order"
-                  name="display_order"
-                  rules={[{ required: true }]}
-                  className="w-1/4"
-              >
-                  <InputNumber />
-              </Form.Item>
-           </div>
-           
-           <Form.Item label="Visible" name="is_visible" valuePropName="checked"><Switch /></Form.Item>
-  
-          <Divider orientation="left">Content</Divider>
-          <Form.Item label="Title" name="title"><Input /></Form.Item>
-          <Form.Item label="Content Body (Markdown/Text)" name="content_body">
-               <Input.TextArea rows={6} />
-          </Form.Item>
-          <Form.Item label="Image URL" name="image_url"><Input /></Form.Item>
+  const { formProps, saveButtonProps, queryResult } = useForm();
+  const record = queryResult?.data?.data;
 
-          <Divider orientation="left">Layout Config</Divider>
-          <div className="flex gap-4">
-              <Form.Item label="Grid Columns" name="grid_columns" className="w-1/4">
-                  <Select options={[
-                      { label: "1 Column", value: 1 },
-                      { label: "2 Columns", value: 2 },
-                      { label: "3 Columns", value: 3 },
-                      { label: "4 Columns", value: 4 },
-                  ]} />
-              </Form.Item>
-              <Form.Item label="Alignment" name="alignment" className="w-1/4">
-                  <Select options={[
-                      { label: "Left", value: "left" },
-                      { label: "Center", value: "center" },
-                      { label: "Right", value: "right" },
-                  ]} />
-              </Form.Item>
-              <Form.Item label="Theme" name="bg_theme" className="w-1/4">
-                  <Select options={[
-                      { label: "Light", value: "light" },
-                      { label: "Muted/Gray", value: "gray" },
-                      { label: "Dark/Navy", value: "navy" },
-                  ]} />
-              </Form.Item>
-          </div>
-        </Form>
-      </Edit>
-    );
-  };
+  const adminInstruction = record?.admin_instruction;
+
+  return (
+    <Edit 
+        saveButtonProps={saveButtonProps}
+        headerButtons={({ defaultButtons }) => (
+            <>
+                {defaultButtons}
+                {record?.parent_slug && (
+                    <Button 
+                        type="primary" 
+                        ghost 
+                        icon={<Eye size={16} />} 
+                        onClick={() => window.open(`https://kretrutosh.com/industries/${record.parent_slug}`, '_blank')}
+                    >
+                        View Live Page
+                    </Button>
+                )}
+            </>
+        )}
+    >
+      <Form {...formProps} layout="vertical">
+        {adminInstruction && (
+            <Alert 
+                message="Editor Instructions"
+                description={adminInstruction}
+                type="info"
+                showIcon
+                className="mb-6 border-blue-200 bg-blue-50"
+            />
+        )}
+
+        <div className="grid grid-cols-2 gap-6 bg-gray-50 p-4 rounded-lg mb-6 border border-gray-200">
+             <Form.Item label="Parent Industry (Slug)" name="parent_slug">
+                <Input disabled className="font-mono text-gray-500" />
+            </Form.Item>
+            <Form.Item label="Section Key (ID)" name="section_key">
+                <Input disabled className="font-mono text-gray-500" />
+            </Form.Item>
+        </div>
+
+        <Form.Item 
+            label="Section Title" 
+            name="title" 
+            rules={[{ required: true }]}
+        >
+          <Input size="large" className="font-bold" />
+        </Form.Item>
+
+        <Form.Item 
+            label="Content Body" 
+            name="content_body"
+        >
+          <Input.TextArea rows={8} />
+        </Form.Item>
+        
+        <Form.Item label="Image URL" name="image_url">
+            <Input placeholder="https://..." />
+        </Form.Item>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Form.Item label="Layout Structure" name="grid_columns">
+                <Select>
+                    <Select.Option value={1}>Full Width (1 Col)</Select.Option>
+                    <Select.Option value={2}>Split / Side-by-Side (2 Cols)</Select.Option>
+                    <Select.Option value={3}>Standard Grid (3 Cols)</Select.Option>
+                </Select>
+            </Form.Item>
+
+            <Form.Item label="Text Alignment" name="alignment">
+                <Select>
+                     <Select.Option value="left">Left Aligned</Select.Option>
+                    <Select.Option value="center">Centered</Select.Option>
+                    <Select.Option value="right">Right Aligned</Select.Option>
+                </Select>
+            </Form.Item>
+
+            <Form.Item label="Background Color" name="bg_theme">
+                <Select>
+                    <Select.Option value="light">White / Default</Select.Option>
+                    <Select.Option value="navy">Navy (Brand Dark)</Select.Option>
+                    <Select.Option value="gray">Light Gray (Subtle)</Select.Option>
+                </Select>
+            </Form.Item>
+        </div>
+
+        <div className="grid grid-cols-2 gap-6">
+            <Form.Item label="Display Order" name="display_order">
+                <InputNumber className="w-full" />
+            </Form.Item>
+            <Form.Item label="Visible on Site?" name="is_visible" valuePropName="checked">
+                <Switch />
+            </Form.Item>
+        </div>
+      </Form>
+    </Edit>
+  );
+};
