@@ -240,6 +240,16 @@ function App() {
             syncWithLocation: true,
             warnWhenUnsavedChanges: true,
             projectId: "3l839q-Az01rW-Pdt2jC",
+            reactQuery: {
+                clientConfig: {
+                    defaultOptions: {
+                        queries: {
+                            staleTime: 0, // Always fetch fresh data (no caching)
+                            retry: false,
+                        },
+                    },
+                },
+            },
           }}
         >
           <Routes>

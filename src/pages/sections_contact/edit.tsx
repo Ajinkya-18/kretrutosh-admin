@@ -69,17 +69,17 @@ export const SectionsContactEdit = () => {
         </Form.Item>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Form.Item label="Background Color" name="bg_theme">
+            <Form.Item label="Background Color" name="bg_theme" help="Section background style.">
                 <Select>
-                    <Select.Option value="light">White / Default</Select.Option>
-                    <Select.Option value="navy">Navy (Brand Dark)</Select.Option>
+                    <Select.Option value="light">White (Default)</Select.Option>
+                    <Select.Option value="navy">Navy Blue (Brand Primary)</Select.Option>
                     <Select.Option value="gray">Light Gray (Subtle)</Select.Option>
                 </Select>
             </Form.Item>
-            <Form.Item label="Text Alignment" name="alignment">
+            <Form.Item label="Text Alignment" name="alignment" help="Anchor for text block.">
                 <Select>
                     <Select.Option value="left">Left Aligned</Select.Option>
-                    <Select.Option value="center">Centered</Select.Option>
+                    <Select.Option value="center">Center Aligned</Select.Option>
                     <Select.Option value="right">Right Aligned</Select.Option>
                 </Select>
             </Form.Item>

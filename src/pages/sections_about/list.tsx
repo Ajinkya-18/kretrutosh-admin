@@ -24,24 +24,23 @@ export const SectionsAboutList = () => {
       <Table {...tableProps} rowKey="id">
         <Table.Column dataIndex="display_order" title="Order" sorter />
         <Table.Column 
-           dataIndex="section_key" 
-           title="Section" 
-           render={(value) => <Tag color="blue">{value}</Tag>}
+           dataIndex="title" 
+           title="Section Title" 
+           render={(val) => <span style={{ fontWeight: 500 }}>{val}</span>}
         />
-        <Table.Column dataIndex="title" title="Title" />
         <Table.Column 
             dataIndex="grid_columns" 
-            title="Grid"
-            render={(val) => <Tag>{val} Cols</Tag>} 
-        />
-        <Table.Column 
-            dataIndex="alignment" 
-            title="Align" 
+            title="Layout"
+            render={(val) => {
+              if (val === 1) return <Tag>Full Width</Tag>;
+              if (val === 2) return <Tag color="blue">Split (2 Col)</Tag>;
+              return <Tag>{val} Cols</Tag>;
+            }} 
         />
         <Table.Column 
             dataIndex="is_visible" 
-            title="Visible"
-            render={(value) => (value ? <Tag color="green">Yes</Tag> : <Tag color="red">No</Tag>)}
+            title="Status"
+            render={(value) => (value ? <Tag color="success">Live</Tag> : <Tag color="default">Hidden</Tag>)}
         />
         <Table.Column
           title="Actions"

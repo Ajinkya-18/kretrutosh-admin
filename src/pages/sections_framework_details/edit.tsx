@@ -69,7 +69,7 @@ export const SectionsFrameworkDetailsEdit = () => {
         </Form.Item>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Form.Item label="Layout Structure" name="grid_columns">
+            <Form.Item label="Layout Structure" name="grid_columns" help="How content is arranged.">
                 <Select>
                     <Select.Option value={1}>Full Width (1 Col)</Select.Option>
                     <Select.Option value={2}>Split / Side-by-Side (2 Cols)</Select.Option>
@@ -77,17 +77,17 @@ export const SectionsFrameworkDetailsEdit = () => {
                 </Select>
             </Form.Item>
 
-            <Form.Item label="Text Alignment" name="alignment">
+            <Form.Item label="Text Alignment" name="alignment" help="Anchor for text block.">
                 <Select>
-                     <Select.Option value="left">Left Aligned</Select.Option>
-                    <Select.Option value="center">Centered</Select.Option>
+                    <Select.Option value="left">Left Aligned</Select.Option>
+                    <Select.Option value="center">Center Aligned</Select.Option>
                     <Select.Option value="right">Right Aligned</Select.Option>
                 </Select>
             </Form.Item>
 
-            <Form.Item label="Background Color" name="bg_theme">
+            <Form.Item label="Background Color" name="bg_theme" help="Section background style.">
                 <Select>
-                    <Select.Option value="light">White / Default</Select.Option>
+                    <Select.Option value="light">White (Default)</Select.Option>
                     <Select.Option value="navy">Navy (Brand Dark)</Select.Option>
                     <Select.Option value="gray">Light Gray (Subtle)</Select.Option>
                 </Select>

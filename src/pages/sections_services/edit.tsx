@@ -69,17 +69,17 @@ export const SectionsServicesEdit = () => {
         </Form.Item>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Form.Item label="Background Color" name="bg_theme">
+            <Form.Item label="Background Color" name="bg_theme" help="Choose a background style for this section.">
                 <Select>
-                    <Select.Option value="light">White / Default</Select.Option>
-                    <Select.Option value="navy">Navy (Brand Dark)</Select.Option>
+                    <Select.Option value="light">White (Default)</Select.Option>
+                    <Select.Option value="navy">Navy Blue (Brand Primary)</Select.Option>
                     <Select.Option value="gray">Light Gray (Subtle)</Select.Option>
                 </Select>
             </Form.Item>
-            <Form.Item label="Text Alignment" name="alignment">
+            <Form.Item label="Text Alignment" name="alignment" help="How text should anchor within the section.">
                 <Select>
                     <Select.Option value="left">Left Aligned</Select.Option>
-                    <Select.Option value="center">Centered</Select.Option>
+                    <Select.Option value="center">Center Aligned</Select.Option>
                     <Select.Option value="right">Right Aligned</Select.Option>
                 </Select>
             </Form.Item>
@@ -91,6 +91,44 @@ export const SectionsServicesEdit = () => {
             </Form.Item>
             <Form.Item label="Visible on Site?" name="is_visible" valuePropName="checked">
                 <Switch />
+            </Form.Item>
+        </div>
+
+        {/* Dynamic Data Editor */}
+        <div className="mt-8 p-6 bg-yellow-50 rounded-xl border border-yellow-200">
+            <h3 className="font-bold text-lg mb-4 text-yellow-800">Advanced Data Management</h3>
+            <p className="text-sm text-yellow-700 mb-4">Edit lists (problem blocks, steps, stats) here. Warning: Invalid JSON will break the section.</p>
+             <Form.Item 
+                label="Raw Data (JSON)" 
+                name="specific_data"
+                help="Structure: {'list': []} or {'steps': []} or {'stats': []}"
+                getValueProps={(value) => ({
+                    value: value ? JSON.stringify(value, null, 2) : '{}',
+                })}
+                getValueFromEvent={(e) => {
+                    try {
+                        return JSON.parse(e.target.value);
+                    } catch (err) {
+                        return e.target.value; 
+                    }
+                }}
+                rules={[
+                    {
+                        validator: (_, value) => {
+                            if (typeof value === 'string') {
+                                try {
+                                    JSON.parse(value);
+                                    return Promise.resolve();
+                                } catch (e) {
+                                    return Promise.reject(new Error('Invalid JSON format'));
+                                }
+                            }
+                            return Promise.resolve();
+                        },
+                    },
+                ]}
+            >
+                <Input.TextArea rows={8} className="font-mono text-sm" />
             </Form.Item>
         </div>
       </Form>
