@@ -58,8 +58,9 @@ export const SectionsIndustryDetailsEdit = () => {
         <Form.Item 
             label="Content Body" 
             name="content_body"
+            help="Supports standard text or raw HTML for rich layouts."
         >
-          <Input.TextArea rows={8} />
+          <Input.TextArea rows={12} className="font-mono text-sm" placeholder="<p>Enter content here...</p>" />
         </Form.Item>
         
         <Form.Item label="Image URL" name="image_url">

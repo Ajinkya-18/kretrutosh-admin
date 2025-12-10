@@ -103,7 +103,8 @@ export const SectionsServicesEdit = () => {
                 name="specific_data"
                 help="Structure: {'list': []} or {'steps': []} or {'stats': []}"
                 getValueProps={(value) => ({
-                    value: value ? JSON.stringify(value, null, 2) : '{}',
+                    // FIX: If it's already a string (user typing), don't stringify again.
+                    value: typeof value === 'string' ? value : JSON.stringify(value, null, 2),
                 })}
                 getValueFromEvent={(e) => {
                     try {

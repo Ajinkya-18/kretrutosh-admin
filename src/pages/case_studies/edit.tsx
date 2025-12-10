@@ -11,8 +11,11 @@ export const CaseStudyEdit = () => {
           label="Case Study Title" 
           name="title" 
           rules={[{ required: true, message: "Title is required" }]}
-        >
           <Input />
+        </Form.Item>
+
+        <Form.Item label="External Link URL" name="link_url" help="Optional: Overrides default view behavior">
+            <Input placeholder="https://..." />
         </Form.Item>
 
         <div style={{ display: "flex", gap: "16px" }}>
@@ -21,6 +24,9 @@ export const CaseStudyEdit = () => {
           </Form.Item>
           <Form.Item label="Industry" name="industry" style={{ flex: 1 }}>
             <Input />
+          </Form.Item>
+          <Form.Item label="Industry Slug (for linking)" name="industry_slug" style={{ flex: 1 }}>
+             <Input placeholder="e.g. retail" />
           </Form.Item>
         </div>
 

@@ -119,13 +119,19 @@ export const SectionsHomeEdit = () => {
                 name="specific_data"
                 help="Edit lists (e.g., 'items': ['Item 1', 'Item 2']) here."
                 getValueProps={(value) => ({
-                    value: value ? JSON.stringify(value, null, 2) : '{}',
+                    // FIX: If it's already a string (user typing), don't stringify again.
+                    // Only stringify if it's an object (from DB/API).
+                    value: typeof value === 'string' ? value : JSON.stringify(value, null, 2),
                 })}
                 getValueFromEvent={(e) => {
+                    // Start by returning raw text so cursor doesn't jump.
+                    // If valid JSON, you could parse, but it causes jumps.
+                    // Better to keep as text until submit, OR parse if perfectly clean.
+                    // Ideally, Supabase receives an object, so we try to parse if valid.
                     try {
                         return JSON.parse(e.target.value);
                     } catch (err) {
-                        return e.target.value; // Keep generic string if invalid, validation will fail on submit if necessary or just save as garbage (postgres might reject)
+                        return e.target.value; 
                     }
                 }}
                 rules={[
