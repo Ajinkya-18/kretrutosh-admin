@@ -42,7 +42,7 @@ export const SectionsIndustryDetailsEdit = () => {
              <Form.Item label="Parent Industry (Slug)" name="parent_slug">
                 <Input disabled className="font-mono text-gray-500" />
             </Form.Item>
-            <Form.Item label="Section Key (ID)" name="section_key">
+            <Form.Item label="System ID (Do Not Change)" name="section_key">
                 <Input disabled className="font-mono text-gray-500" />
             </Form.Item>
         </div>
@@ -56,12 +56,30 @@ export const SectionsIndustryDetailsEdit = () => {
         </Form.Item>
 
         <Form.Item 
-            label="Content Body" 
+            label="Content Body (Standard)" 
             name="content_body"
-            help="Supports standard text or raw HTML for rich layouts."
+            help="Main text content for this section."
         >
-          <Input.TextArea rows={12} className="font-mono text-sm" placeholder="<p>Enter content here...</p>" />
+          <Input.TextArea rows={6} className="font-mono text-sm" placeholder="<p>Enter content here...</p>" />
         </Form.Item>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-blue-50/50 p-4 rounded-lg border border-blue-100 mb-6">
+            <Form.Item 
+                label="Challenges Detail (HTML)" 
+                name="challenges_html"
+                help="Appears in 'Challenges' section. Supports heavy HTML/Rich Text."
+            >
+              <Input.TextArea rows={8} className="font-mono text-sm" placeholder="<ul><li>...</li></ul>" />
+            </Form.Item>
+
+            <Form.Item 
+                label="Approach Detail (HTML)" 
+                name="approach_html"
+                help="Appears in 'Approach' section. Supports heavy HTML/Rich Text."
+            >
+              <Input.TextArea rows={8} className="font-mono text-sm" placeholder="<div class='step'>...</div>" />
+            </Form.Item>
+        </div>
         
         <Form.Item label="Image URL" name="image_url">
             <Input placeholder="https://..." />
