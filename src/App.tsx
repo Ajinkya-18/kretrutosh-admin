@@ -69,9 +69,7 @@ import { SectionsServicesList } from "./pages/sections_services/list";
 import { SectionsServicesCreate } from "./pages/sections_services/create";
 import { SectionsServicesEdit } from "./pages/sections_services/edit";
 
-import { SectionsIndustriesList } from "./pages/sections_industries/list";
-import { SectionsIndustriesCreate } from "./pages/sections_industries/create";
-import { SectionsIndustriesEdit } from "./pages/sections_industries/edit";
+
 
 import { UIComponentsList } from "./pages/ui_components/list";
 import { UIComponentsCreate } from "./pages/ui_components/create";
@@ -159,13 +157,7 @@ function App() {
             create: "/sections_assessment_details/create",
             meta: { label: "Assessment Details Builder" }
           },
-          {
-            name: "sections_industries",
-            list: "/sections_industries",
-            edit: "/sections_industries/edit/:id",
-            create: "/sections_industries/create",
-            meta: { label: "Industry Page Builder (Legacy)" }
-          },
+
           {
             name: "ui_components",
             list: "/ui_components",
@@ -390,11 +382,7 @@ function App() {
                   <Route path="edit/:id" element={<SectionsServicesEdit />} />
               </Route>
 
-              <Route path="/sections_industries">
-                  <Route index element={<SectionsIndustriesList />} />
-                  <Route path="create" element={<SectionsIndustriesCreate />} />
-                  <Route path="edit/:id" element={<SectionsIndustriesEdit />} />
-              </Route>
+
 
               <Route path="/ui_components">
                   <Route index element={<UIComponentsList />} />
