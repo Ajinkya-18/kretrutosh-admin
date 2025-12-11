@@ -92,18 +92,11 @@ export const SectionsAboutCreate = () => {
             <Input.TextArea rows={2} />
           </Form.Item>
           <Form.Item
-            label="Description"
-            name="description"
+            label="Description / Content Body"
+            name="content_body"
+            help="Main text content for this section."
           >
-            <Input.TextArea rows={4} />
-          </Form.Item>
-  
-          <Divider orientation="left">Specific Data (JSON)</Divider>
-          <Form.Item
-              label="JSON Data"
-              name="specific_data"
-          >
-               <Input.TextArea rows={8} style={{ fontFamily: 'monospace' }} />
+            <Input.TextArea rows={6} />
           </Form.Item>
         </Form>
       </Create>
