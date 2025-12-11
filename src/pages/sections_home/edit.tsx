@@ -110,48 +110,213 @@ export const SectionsHomeEdit = () => {
             </Form.Item>
         </div>
 
-        {/* Dynamic Data Editor */}
-        <div className="mt-8 p-6 bg-yellow-50 rounded-xl border border-yellow-200">
-            <h3 className="font-bold text-lg mb-4 text-yellow-800">Advanced Data Management</h3>
-            <p className="text-sm text-yellow-700 mb-4">Edit lists and special properties here. Warning: Invalid JSON will break the section.</p>
-             <Form.Item 
-                label="Raw Data (JSON)" 
-                name="specific_data"
-                help="Edit lists (e.g., 'items': ['Item 1', 'Item 2']) here."
-                getValueProps={(value) => ({
-                    // FIX: If it's already a string (user typing), don't stringify again.
-                    // Only stringify if it's an object (from DB/API).
-                    value: typeof value === 'string' ? value : JSON.stringify(value, null, 2),
-                })}
-                getValueFromEvent={(e) => {
-                    // Start by returning raw text so cursor doesn't jump.
-                    // If valid JSON, you could parse, but it causes jumps.
-                    // Better to keep as text until submit, OR parse if perfectly clean.
-                    // Ideally, Supabase receives an object, so we try to parse if valid.
-                    try {
-                        return JSON.parse(e.target.value);
-                    } catch (err) {
-                        return e.target.value; 
-                    }
-                }}
-                rules={[
-                    {
-                        validator: (_, value) => {
-                            if (typeof value === 'string') {
-                                try {
-                                    JSON.parse(value);
-                                    return Promise.resolve();
-                                } catch (e) {
-                                    return Promise.reject(new Error('Invalid JSON format'));
-                                }
-                            }
-                            return Promise.resolve();
-                        },
-                    },
-                ]}
-            >
-                <Input.TextArea rows={8} className="font-mono text-sm" />
-            </Form.Item>
+        {/* Dynamic Visual Editor based on Section Key */}
+        <div className="mt-8 p-6 bg-white rounded-xl border border-gray-200 shadow-sm">
+            <h3 className="font-bold text-lg mb-4 text-gray-800 border-b pb-2">Content Manager</h3>
+            
+            {/* Visual Editor for Growth Engine */}
+            {record?.section_key === 'growth_engine' && (
+                <Form.List name={['specific_data', 'motions']}>
+                    {(fields, { add, remove }) => (
+                        <>
+                            {fields.map(({ key, name, ...restField }) => (
+                                <div key={key} className="mb-4 p-4 bg-gray-50 rounded-lg border border-gray-200 relative group">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pr-8">
+                                        <Form.Item
+                                            {...restField}
+                                            name={[name, 'title']}
+                                            label="Title"
+                                            rules={[{ required: true, message: 'Missing title' }]}
+                                            className="mb-2"
+                                        >
+                                            <Input placeholder="e.g. Sales Velocity" />
+                                        </Form.Item>
+                                        <Form.Item
+                                            {...restField}
+                                            name={[name, 'icon']}
+                                            label="Icon"
+                                            className="mb-2"
+                                        >
+                                           <Select placeholder="Select Icon">
+                                               <Select.Option value="Target">Target (Strategy)</Select.Option>
+                                               <Select.Option value="TrendingUp">Trending Up (Growth)</Select.Option>
+                                               <Select.Option value="Users">Users (Community)</Select.Option>
+                                               <Select.Option value="Zap">Zap (Speed/AI)</Select.Option>
+                                               <Select.Option value="Heart">Heart (Culture)</Select.Option>
+                                           </Select>
+                                        </Form.Item>
+                                        <Form.Item
+                                            {...restField}
+                                            name={[name, 'description']}
+                                            label="Description"
+                                            className="mb-2 md:col-span-2"
+                                        >
+                                            <Input.TextArea rows={2} placeholder="Brief benefit description..." />
+                                        </Form.Item>
+                                        <Form.Item
+                                            {...restField}
+                                            name={[name, 'link']}
+                                            label="Link URL"
+                                            className="mb-0 md:col-span-2"
+                                        >
+                                            <Input placeholder="/services/example-service" />
+                                        </Form.Item>
+                                    </div>
+                                    <Button 
+                                        type="text" 
+                                        danger 
+                                        onClick={() => remove(name)} 
+                                        className="absolute top-2 right-2 opacity-50 hover:opacity-100"
+                                    >
+                                        Remove
+                                    </Button>
+                                </div>
+                            ))}
+                            <Form.Item>
+                                <Button type="dashed" onClick={() => add()} block>
+                                    + Add Service Tile
+                                </Button>
+                            </Form.Item>
+                        </>
+                    )}
+                </Form.List>
+            )}
+
+            {/* Visual Editor for Outcomes List */}
+            {record?.section_key === 'outcomes' && (
+                <Form.List name={['specific_data', 'items']}>
+                    {(fields, { add, remove }) => (
+                        <>
+                            {fields.map(({ key, name, ...restField }) => (
+                                <div key={key} className="flex gap-2 mb-2">
+                                     <Form.Item
+                                        {...restField}
+                                        name={[name]}
+                                        className="mb-0 flex-1"
+                                        rules={[{ required: true, message: 'Missing item' }]}
+                                    >
+                                        <Input placeholder="Outcome item (e.g. 'Revenue Growth')" />
+                                    </Form.Item>
+                                    <Button type="text" danger onClick={() => remove(name)}>X</Button>
+                                </div>
+                            ))}
+                            <Form.Item className="mt-4">
+                                <Button type="dashed" onClick={() => add()} block>
+                                    + Add Outcome Item
+                                </Button>
+                            </Form.Item>
+                        </>
+                    )}
+                </Form.List>
+            )}
+
+            {/* Thought Leadership: Cards List (Podcast, Book, etc.) */}
+            {record?.section_key === 'thought_leadership' && (
+                <div className="space-y-4">
+                    <Form.List name={['specific_data', 'cards']}>
+                        {(fields, { add, remove }) => (
+                            <>
+                                {fields.map(({ key, name, ...restField }) => (
+                                    <div key={key} className="mb-6 p-4 bg-gray-50 rounded border border-gray-200 relative">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <Form.Item
+                                                {...restField}
+                                                name={[name, 'badge']}
+                                                label="Badge / Tag"
+                                                rules={[{ required: true }]}
+                                            >
+                                                <Input placeholder="e.g. Podcast" />
+                                            </Form.Item>
+                                            <Form.Item
+                                                {...restField}
+                                                name={[name, 'title']}
+                                                label="Card Title"
+                                                rules={[{ required: true }]}
+                                            >
+                                                <Input placeholder="Title" />
+                                            </Form.Item>
+                                            <Form.Item
+                                                {...restField}
+                                                name={[name, 'description']}
+                                                label="Description"
+                                                className="md:col-span-2"
+                                            >
+                                                <Input.TextArea rows={2} placeholder="Brief description..." />
+                                            </Form.Item>
+                                            <Form.Item
+                                                {...restField}
+                                                name={[name, 'cta_text']}
+                                                label="CTA Text"
+                                            >
+                                                <Input placeholder="e.g. Listen Now" />
+                                            </Form.Item>
+                                            <Form.Item
+                                                {...restField}
+                                                name={[name, 'link']}
+                                                label="Destination Link"
+                                            >
+                                                <Select 
+                                                    showSearch
+                                                    allowClear
+                                                    placeholder="Select or type path"
+                                                    optionFilterProp="children"
+                                                >
+                                                    <Select.Option value="/resources/podcast">Podcast List</Select.Option>
+                                                    <Select.Option value="/book">Book Page</Select.Option>
+                                                    <Select.Option value="/resources/articles">LinkedIn Articles</Select.Option>
+                                                    <Select.Option value="/resources/whitepapers">Whitepapers</Select.Option>
+                                                    <Select.Option value="/about">About Page</Select.Option>
+                                                    <Select.Option value="/contact">Contact Page</Select.Option>
+                                                    <Select.Option value="/services">Services Page</Select.Option>
+                                                </Select>
+                                            </Form.Item>
+                                            <Form.Item
+                                                {...restField}
+                                                name={[name, 'image_url']}
+                                                label="Image URL"
+                                                className="md:col-span-2"
+                                                help="Paste a full URL (https://...) to override the default image."
+                                            >
+                                                <Input placeholder="https://example.com/my-image.jpg" />
+                                            </Form.Item>
+                                        </div>
+                                        <Button 
+                                            type="text" 
+                                            danger 
+                                            onClick={() => remove(name)} 
+                                            className="absolute top-2 right-2"
+                                        >
+                                            Remove Card
+                                        </Button>
+                                    </div>
+                                ))}
+                                <Button type="dashed" onClick={() => add()} block>
+                                    + Add Tab / Card
+                                </Button>
+                            </>
+                        )}
+                    </Form.List>
+                </div>
+            )}
+
+            {/* Fallback JSON Editor */}
+             {!['growth_engine', 'outcomes', 'thought_leadership'].includes(record?.section_key) && (
+                 <div className="bg-yellow-50 p-4 rounded border border-yellow-200">
+                     <p className="text-yellow-800 text-sm mb-2 font-bold">Raw Data Editor (Advanced)</p>
+                     <Form.Item 
+                        name="specific_data"
+                        label="Raw Data (JSON)"
+                        getValueProps={(value) => ({
+                            value: typeof value === 'string' ? value : JSON.stringify(value, null, 2),
+                        })}
+                        getValueFromEvent={(e) => {
+                            try { return JSON.parse(e.target.value); } catch (err) { return e.target.value; }
+                        }}
+                    >
+                        <Input.TextArea rows={6} className="font-mono text-xs" />
+                    </Form.Item>
+                 </div>
+             )}
         </div>
       </Form>
     </Edit>

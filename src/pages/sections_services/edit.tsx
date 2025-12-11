@@ -94,43 +94,153 @@ export const SectionsServicesEdit = () => {
             </Form.Item>
         </div>
 
-        {/* Dynamic Data Editor */}
-        <div className="mt-8 p-6 bg-yellow-50 rounded-xl border border-yellow-200">
-            <h3 className="font-bold text-lg mb-4 text-yellow-800">Advanced Data Management</h3>
-            <p className="text-sm text-yellow-700 mb-4">Edit lists (problem blocks, steps, stats) here. Warning: Invalid JSON will break the section.</p>
-             <Form.Item 
-                label="Raw Data (JSON)" 
-                name="specific_data"
-                help="Structure: {'list': []} or {'steps': []} or {'stats': []}"
-                getValueProps={(value) => ({
-                    // FIX: If it's already a string (user typing), don't stringify again.
-                    value: typeof value === 'string' ? value : JSON.stringify(value, null, 2),
-                })}
-                getValueFromEvent={(e) => {
-                    try {
-                        return JSON.parse(e.target.value);
-                    } catch (err) {
-                        return e.target.value; 
-                    }
-                }}
-                rules={[
-                    {
-                        validator: (_, value) => {
-                            if (typeof value === 'string') {
-                                try {
-                                    JSON.parse(value);
-                                    return Promise.resolve();
-                                } catch (e) {
-                                    return Promise.reject(new Error('Invalid JSON format'));
-                                }
-                            }
-                            return Promise.resolve();
-                        },
-                    },
-                ]}
-            >
-                <Input.TextArea rows={8} className="font-mono text-sm" />
-            </Form.Item>
+        {/* Icon Picker for Hero Sections */}
+        {record?.section_key === 'hero' && (
+            <div className="bg-blue-50 p-4 rounded-lg mb-6 border border-blue-100">
+                <Form.Item label="Service Icon" name="icon" help="Icon displayed on the Homepage Growth Engine tile.">
+                    <Select placeholder="Select an Icon">
+                        <Select.Option value="Target">Target (Strategy)</Select.Option>
+                        <Select.Option value="TrendingUp">Trending Up (Growth)</Select.Option>
+                        <Select.Option value="Users">Users (Community/CS)</Select.Option>
+                        <Select.Option value="Zap">Zap (Digital/AI)</Select.Option>
+                        <Select.Option value="Heart">Heart (Culture)</Select.Option>
+                    </Select>
+                </Form.Item>
+            </div>
+        )}
+
+        {/* Dynamic Visual Editor */}
+        <div className="mt-8 p-6 bg-white rounded-xl border border-gray-200 shadow-sm">
+            <h3 className="font-bold text-lg mb-4 text-gray-800 border-b pb-2">Content Manager</h3>
+
+            {/* Hero: Badge */}
+            {record?.section_key === 'hero' && (
+                <Form.Item label="Badge Text" name={['specific_data', 'badge']}>
+                    <Input placeholder="e.g. Pre-Sales Transformation" />
+                </Form.Item>
+            )}
+
+            {/* Problem Block: List of Strings */}
+            {record?.section_key === 'problem_block' && (
+                <Form.List name={['specific_data', 'list']}>
+                    {(fields, { add, remove }) => (
+                        <>
+                            {fields.map(({ key, name, ...restField }) => (
+                                <div key={key} className="flex gap-2 mb-2">
+                                     <Form.Item
+                                        {...restField}
+                                        name={[name]}
+                                        className="mb-0 flex-1"
+                                        rules={[{ required: true, message: 'Missing problem item' }]}
+                                    >
+                                        <Input placeholder="Problem item (e.g. 'Silos in teams')" />
+                                    </Form.Item>
+                                    <Button type="text" danger onClick={() => remove(name)}>Remove</Button>
+                                </div>
+                            ))}
+                            <Button type="dashed" onClick={() => add()} block className="mt-2">
+                                + Add Problem Item
+                            </Button>
+                        </>
+                    )}
+                </Form.List>
+            )}
+
+             {/* Approach Steps: Title + Desc */}
+            {record?.section_key === 'approach_steps' && (
+                <Form.List name={['specific_data', 'steps']}>
+                    {(fields, { add, remove }) => (
+                        <>
+                            {fields.map(({ key, name, ...restField }) => (
+                                <div key={key} className="mb-4 p-4 bg-gray-50 rounded border border-gray-200 relative">
+                                    <div className="grid grid-cols-1 gap-4 pr-12">
+                                        <Form.Item
+                                            {...restField}
+                                            name={[name, 'title']}
+                                            label="Step Title"
+                                            className="mb-0"
+                                            rules={[{ required: true }]}
+                                        >
+                                            <Input placeholder="Step Title" />
+                                        </Form.Item>
+                                        <Form.Item
+                                            {...restField}
+                                            name={[name, 'desc']}
+                                            label="Description"
+                                            className="mb-0"
+                                        >
+                                            <Input.TextArea rows={2} placeholder="Description" />
+                                        </Form.Item>
+                                    </div>
+                                    <Button 
+                                        type="text" 
+                                        danger 
+                                        onClick={() => remove(name)} 
+                                        className="absolute top-2 right-2"
+                                    >
+                                        Remove
+                                    </Button>
+                                </div>
+                            ))}
+                            <Button type="dashed" onClick={() => add()} block>
+                                + Add Approach Step
+                            </Button>
+                        </>
+                    )}
+                </Form.List>
+            )}
+
+            {/* Outcomes Grid: Stats (Label + Value) */}
+            {record?.section_key === 'outcomes_grid' && (
+                <Form.List name={['specific_data', 'stats']}>
+                    {(fields, { add, remove }) => (
+                        <>
+                            {fields.map(({ key, name, ...restField }) => (
+                                <div key={key} className="mb-2 flex gap-4 items-start">
+                                    <Form.Item
+                                        {...restField}
+                                        name={[name, 'label']}
+                                        label="Label (Metric)"
+                                        className="mb-0 flex-1"
+                                        rules={[{ required: true }]}
+                                    >
+                                        <Input placeholder="e.g. ROI" />
+                                    </Form.Item>
+                                    <Form.Item
+                                        {...restField}
+                                        name={[name, 'value']}
+                                        label="Value"
+                                        className="mb-0 flex-1"
+                                        rules={[{ required: true }]}
+                                    >
+                                        <Input placeholder="e.g. +25%" />
+                                    </Form.Item>
+                                    <Button type="text" danger onClick={() => remove(name)} className="mt-8">X</Button>
+                                </div>
+                            ))}
+                            <Button type="dashed" onClick={() => add()} block className="mt-4">
+                                + Add Outcome Stat
+                            </Button>
+                        </>
+                    )}
+                </Form.List>
+            )}
+
+            {/* Fallback JSON Editor */}
+             {!['hero', 'problem_block', 'approach_steps', 'outcomes_grid'].includes(record?.section_key) && (
+                 <Form.Item 
+                    name="specific_data"
+                    label="Raw Data (JSON)"
+                    getValueProps={(value) => ({
+                        value: typeof value === 'string' ? value : JSON.stringify(value, null, 2),
+                    })}
+                    getValueFromEvent={(e) => {
+                        try { return JSON.parse(e.target.value); } catch (err) { return e.target.value; }
+                    }}
+                >
+                    <Input.TextArea rows={6} className="font-mono text-xs" />
+                </Form.Item>
+             )}
         </div>
       </Form>
     </Edit>
