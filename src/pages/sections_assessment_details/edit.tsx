@@ -94,7 +94,7 @@ export const SectionsAssessmentDetailsEdit = () => {
 
         <div className="grid grid-cols-2 gap-6">
             <Form.Item label="Display Order" name="display_order">
-                <InputNumber className="w-full" />
+                <InputNumber min={1} max={20} className="w-full" />
             </Form.Item>
             <Form.Item label="Visible on Site?" name="is_visible" valuePropName="checked">
                 <Switch />

@@ -68,7 +68,15 @@ export const SectionsServicesEdit = () => {
           <Input.TextArea rows={6} />
         </Form.Item>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Form.Item label="Layout Structure" name="grid_columns" help="How content is arranged.">
+                <Select>
+                    <Select.Option value={1}>Full Width (1 Col)</Select.Option>
+                    <Select.Option value={2}>Split / Side-by-Side (2 Cols)</Select.Option>
+                    <Select.Option value={3}>Standard Grid (3 Cols)</Select.Option>
+                    <Select.Option value={4}>Quarters (4 Cols)</Select.Option>
+                </Select>
+            </Form.Item>
             <Form.Item label="Background Color" name="bg_theme" help="Choose a background style for this section.">
                 <Select>
                     <Select.Option value="light">White (Default)</Select.Option>
@@ -87,7 +95,7 @@ export const SectionsServicesEdit = () => {
 
         <div className="grid grid-cols-2 gap-6">
             <Form.Item label="Display Order" name="display_order">
-                <InputNumber className="w-full" />
+                <InputNumber min={1} max={20} className="w-full" />
             </Form.Item>
             <Form.Item label="Visible on Site?" name="is_visible" valuePropName="checked">
                 <Switch />

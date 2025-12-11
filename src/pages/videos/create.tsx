@@ -1,5 +1,5 @@
 import { Create, useForm } from "@refinedev/antd";
-import { Form, Input } from "antd";
+import { Form, Input, DatePicker } from "antd";
 
 export const VideoCreate = () => {
   const { formProps, saveButtonProps } = useForm();
@@ -28,6 +28,14 @@ export const VideoCreate = () => {
           rules={[{ required: true }]}
         >
           <Input placeholder="dQw4w9WgXcQ" />
+        </Form.Item>
+        <Form.Item 
+            label="Date Published" 
+            name="date_published" 
+            rules={[{ required: true, message: 'Please select the upload date' }]}
+            help="For chronological sorting."
+        >
+            <DatePicker style={{ width: '100%' }} />
         </Form.Item>
       </Form>
     </Create>
