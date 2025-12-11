@@ -1,6 +1,6 @@
 import { Edit, useForm } from "@refinedev/antd";
 import { Form, Input, Select, InputNumber, Switch, Alert, Button } from "antd";
-import { Eye } from "lucide-react";
+import { Eye, Settings, Trash2, Plus, Image as ImageIcon } from "lucide-react";
 
 export const SectionsServicesEdit = () => {
   const { formProps, saveButtonProps, queryResult } = useForm();
