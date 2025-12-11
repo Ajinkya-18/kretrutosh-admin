@@ -108,7 +108,7 @@ export const SectionsContactCreate = () => {
              )}
           </div>
   
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 gap-4">
               <Form.Item label="Grid Columns" name="grid_columns" initialValue={1}>
                   <Select>
                       <Select.Option value={1}>1 Column</Select.Option>

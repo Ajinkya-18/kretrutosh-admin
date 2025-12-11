@@ -60,14 +60,8 @@ export const SectionsContactEdit = () => {
           <Input.TextArea rows={2} showCount maxLength={200} placeholder="e.g. We'd love to hear from you." />
         </Form.Item>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Form.Item label="Background Color" name="bg_theme" help="Section background style.">
-                <Select>
-                    <Select.Option value="light">White (Default)</Select.Option>
-                    <Select.Option value="navy">Navy Blue (Brand Primary)</Select.Option>
-                    <Select.Option value="gray">Light Gray (Subtle)</Select.Option>
-                </Select>
-            </Form.Item>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
             <Form.Item label="Text Alignment" name="alignment" help="Anchor for text block.">
                 <Select>
                     <Select.Option value="left">Left Aligned</Select.Option>
