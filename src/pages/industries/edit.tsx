@@ -1,5 +1,6 @@
 import { Edit, useForm } from "@refinedev/antd";
 import { Form, Input, Select } from "antd";
+import { RichTextEditor } from "../../components/RichTextEditor";
 
 export const IndustryEdit = () => {
   const { formProps, saveButtonProps } = useForm();
@@ -33,24 +34,24 @@ export const IndustryEdit = () => {
         <Form.Item label="Icon Name (Lucide React)" name="icon_name">
           <Input />
         </Form.Item>
+        
+        <Form.Item label="Related Framework Slugs" name="framework_slugs">
+          <Select mode="tags" tokenSeparators={[',']} open={false} />
+        </Form.Item>
+
+        <Form.Item label="Challenges (Rich HTML)" name="challenges_html">
+          <RichTextEditor />
+        </Form.Item>
+
+        <Form.Item label="Our Tailored Approach (Rich HTML)" name="approach_html">
+          <RichTextEditor />
+        </Form.Item>
 
         <Form.Item label="Description" name="description">
           <Input.TextArea rows={3} />
         </Form.Item>
 
-        <Form.Item label="Our Tailored Approach" name="approach">
-          <Input.TextArea rows={4} />
-        </Form.Item>
-
-        <Form.Item label="Industry Challenges" name="challenges">
-          <Select mode="tags" tokenSeparators={[',']} open={false} />
-        </Form.Item>
-
         <Form.Item label="Impact Outcomes" name="outcomes">
-          <Select mode="tags" tokenSeparators={[',']} open={false} />
-        </Form.Item>
-
-        <Form.Item label="Related Framework Slugs" name="framework_slugs">
           <Select mode="tags" tokenSeparators={[',']} open={false} />
         </Form.Item>
       </Form>

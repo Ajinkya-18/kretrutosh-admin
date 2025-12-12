@@ -2,16 +2,18 @@ import { Edit, useForm } from "@refinedev/antd";
 import { Form, Input, Upload, Select, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { supabaseClient } from "../../utility/supabaseClient";
+import { RichTextEditor } from "../../components/RichTextEditor";
 
 export const FrameworkEdit = () => {
   const { formProps, saveButtonProps, form, queryResult } = useForm();
   const data = queryResult?.data?.data;
   
-  const defaultFileList = data?.image_url ? [{ 
+  // Mapped to diagram_url (or image_url fallbacks)
+  const defaultFileList = data?.diagram_url ? [{ 
     uid: '-1', 
     name: 'current-image', 
     status: 'done', 
-    url: data.image_url 
+    url: data.diagram_url 
   }] : [];
 
   const customRequest = async ({ file, onSuccess, onError }: any) => {
@@ -22,7 +24,7 @@ export const FrameworkEdit = () => {
       
       const { data } = supabaseClient.storage.from("website-assets").getPublicUrl(fileName);
       const url = data.publicUrl;
-      form.setFieldValue("image_url", url);
+      form.setFieldValue("diagram_url", url);
       onSuccess(url);
       message.success("Updated!");
     } catch (error: any) { 
@@ -41,17 +43,9 @@ export const FrameworkEdit = () => {
         <Form.Item label="Slug" name="slug" rules={[{ required: true }]}>
           <Input />
         </Form.Item>
-
-        <Form.Item label="Subtitle" name="subtitle">
-          <Input />
-        </Form.Item>
         
-        <Form.Item label="Short Description" name="description">
-          <Input.TextArea rows={3} />
-        </Form.Item>
-        
-        <Form.Item label="Full Details" name="full_details">
-          <Input.TextArea rows={6} />
+        <Form.Item label="Description (Rich HTML)" name="description_html">
+          <RichTextEditor />
         </Form.Item>
         
         <Form.Item 
@@ -66,15 +60,10 @@ export const FrameworkEdit = () => {
           <Select mode="tags" placeholder="Type outcome and press Enter" tokenSeparators={[',']} open={false} />
         </Form.Item>
         
-        <Form.Item name="image_url" hidden><Input /></Form.Item>
+        <Form.Item name="diagram_url" hidden><Input /></Form.Item>
 
         <Form.Item 
-          label="Framework Image"
-          getValueFromEvent={(e) => {
-            if (typeof e === 'string') return e;
-            if (Array.isArray(e)) return e.length > 0 ? e[0].response : null;
-            return e?.fileList && e.fileList.length > 0 ? e.fileList[0].response : null;
-          }}
+          label="Diagram / Image"
         >
           <Upload.Dragger 
             name="file" 
