@@ -1,12 +1,56 @@
+import { useState } from "react";
 import { Edit, useForm } from "@refinedev/antd";
-import { Form, Input, Card, Space, Button } from "antd";
+import { Form, Input, Card, Space, Button, message } from "antd";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
+import { supabaseClient } from "../../utility/supabaseClient";
 
 export const ConfigFooterEdit = () => {
-  const { formProps, saveButtonProps } = useForm();
+  const [loading, setLoading] = useState(false);
+  
+  const { formProps, saveButtonProps, form } = useForm({
+    action: "edit",
+    id: 1, // Singleton
+    queryOptions: {
+        // Ensure we fetch the singleton row 1 specifically, or any single row
+        select: ({ data }) => {
+            return { data };
+        }
+    }
+  });
+
+  const onFinish = async (values: any) => {
+    setLoading(true);
+    try {
+        const { error } = await supabaseClient
+            .from('config_footer')
+            .upsert({ 
+                id: 1,
+                copyright_text: values.copyright_text,
+                social_links: values.social_links 
+            }); // Upsert handles create-if-missing for ID 1
+        
+        if (error) throw error;
+        message.success("Footer updated successfully!");
+    } catch (err: any) {
+        message.error("Error saving footer: " + err.message);
+    } finally {
+        setLoading(false);
+    }
+  };
+
   return (
-    <Edit saveButtonProps={saveButtonProps}>
-      <Form {...formProps} layout="vertical">
+    <Edit 
+        saveButtonProps={{ 
+            ...saveButtonProps, 
+            onClick: () => form.submit(), 
+            loading: loading 
+        }}
+    >
+      <Form 
+        {...formProps} 
+        layout="vertical"
+        onFinish={onFinish}
+      >
         <Form.Item label="Copyright Text" name="copyright_text"><Input /></Form.Item>
         <Form.List name="social_links">
             {(fields, { add, remove }) => (

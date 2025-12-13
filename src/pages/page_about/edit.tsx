@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Edit, useForm } from "@refinedev/antd";
 import { Form, Input, Upload, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
@@ -5,10 +6,39 @@ import { supabaseClient } from "../../utility/supabaseClient";
 import { RichTextEditor } from "../../components/RichTextEditor";
 
 export const PageAboutEdit = () => {
-  const { formProps, saveButtonProps, form, queryResult } = useForm();
+  const [loading, setLoading] = useState(false);
+  const { formProps, saveButtonProps, form, queryResult } = useForm({
+    action: "edit",
+    id: 1, // Singleton
+    queryOptions: {
+        select: ({ data }) => ({ data })
+    }
+  });
+
   const data = queryResult?.data?.data;
   
   const defaultFileList = data?.founder_image_url ? [{ uid: '-1', name: 'current', status: 'done', url: data.founder_image_url }] : [];
+
+  const onFinish = async (values: any) => {
+    setLoading(true);
+    try {
+        const { error } = await supabaseClient
+            .from('page_about')
+            .upsert({ 
+                id: 1,
+                hero_title: values.hero_title,
+                story_html: values.story_html,
+                founder_image_url: values.founder_image_url
+            });
+        
+        if (error) throw error;
+        message.success("About page updated successfully!");
+    } catch (err: any) {
+        message.error("Error saving data: " + err.message);
+    } finally {
+        setLoading(false);
+    }
+  };
 
   const customRequest = async ({ file, onSuccess, onError }: any) => {
     try {
@@ -23,8 +53,18 @@ export const PageAboutEdit = () => {
   };
 
   return (
-    <Edit saveButtonProps={saveButtonProps}>
-      <Form {...formProps} layout="vertical">
+    <Edit 
+        saveButtonProps={{ 
+            ...saveButtonProps, 
+            onClick: () => form.submit(),
+            loading: loading
+        }}
+    >
+      <Form 
+        {...formProps} 
+        layout="vertical"
+        onFinish={onFinish}
+      >
         <Form.Item label="Hero Title" name="hero_title" rules={[{ required: true }]}><Input /></Form.Item>
         <Form.Item label="Founder Story (Rich HTML)" name="story_html"><RichTextEditor /></Form.Item>
         <Form.Item name="founder_image_url" hidden><Input /></Form.Item>

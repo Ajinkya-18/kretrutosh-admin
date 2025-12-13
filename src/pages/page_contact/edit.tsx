@@ -1,13 +1,56 @@
+import { useState } from "react";
 import { Edit, useForm } from "@refinedev/antd";
-import { Form, Input } from "antd";
+import { Form, Input, message } from "antd";
+import { supabaseClient } from "../../utility/supabaseClient";
 import { RichTextEditor } from "../../components/RichTextEditor";
 
 export const PageContactEdit = () => {
-  const { formProps, saveButtonProps } = useForm();
+  const [loading, setLoading] = useState(false);
+  const { formProps, saveButtonProps, form } = useForm({
+    action: "edit",
+    id: 1, // Singleton
+    queryOptions: {
+        select: ({ data }) => ({ data })
+    }
+  });
+
+  const onFinish = async (values: any) => {
+    setLoading(true);
+    try {
+        const { error } = await supabaseClient
+            .from('page_contact')
+            .upsert({ 
+                id: 1,
+                hero_title: values.hero_title,
+                address_html: values.address_html,
+                google_form_url: values.google_form_url,
+                calendly_url: values.calendly_url,
+                calendly_cta_text: values.calendly_cta_text,
+                map_embed: values.map_embed
+            });
+        
+        if (error) throw error;
+        message.success("Contact page updated successfully!");
+    } catch (err: any) {
+        message.error("Error saving data: " + err.message);
+    } finally {
+        setLoading(false);
+    }
+  };
 
   return (
-    <Edit saveButtonProps={saveButtonProps}>
-      <Form {...formProps} layout="vertical">
+    <Edit 
+        saveButtonProps={{ 
+            ...saveButtonProps, 
+            onClick: () => form.submit(),
+            loading: loading
+        }}
+    >
+      <Form 
+        {...formProps} 
+        layout="vertical"
+        onFinish={onFinish}
+      >
         <Form.Item label="Hero Title" name="hero_title" rules={[{ required: true }]}><Input /></Form.Item>
         <Form.Item label="Address / Details (Rich HTML)" name="address_html"><RichTextEditor /></Form.Item>
         

@@ -3,9 +3,13 @@ import { Form, Input, Upload, Radio, message } from "antd";
 import { UploadOutlined, FilePdfOutlined, LinkOutlined } from "@ant-design/icons";
 import { supabaseClient } from "../../utility/supabaseClient";
 import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 
 export const WhitepaperEdit = () => {
+  const [loading, setLoading] = useState(false);
   const { formProps, saveButtonProps, form, queryResult } = useForm();
+  const { id } = useParams();
+
   const data = queryResult?.data?.data;
   
   // Initialize state based on fetched data
@@ -26,6 +30,30 @@ export const WhitepaperEdit = () => {
   const defaultCover = data?.cover_image_url ? [{ uid: '-1', name: 'cover', status: 'done', url: data.cover_image_url }] : [];
   const defaultPDF = data?.download_url ? [{ uid: '-2', name: 'document.pdf', status: 'done', url: data.download_url }] : [];
 
+  const onFinish = async (values: any) => {
+    setLoading(true);
+    try {
+        const { error } = await supabaseClient
+            .from('whitepapers')
+            .update({
+                title: values.title,
+                description: values.description,
+                type: values.type,
+                external_link: values.type === 'link' ? values.external_link : null,
+                download_url: values.type === 'pdf' ? values.download_url : null,
+                cover_image_url: values.cover_image_url
+            })
+            .eq('id', id);
+        
+        if (error) throw error;
+        message.success("Whitepaper updated successfully!");
+    } catch (err: any) {
+        message.error("Error saving whitepaper: " + err.message);
+    } finally {
+        setLoading(false);
+    }
+  };
+
   const uploadToSupabase = (folder: string, fieldName: string) => async ({ file, onSuccess, onError }: any) => {
     try {
       const fileName = `whitepapers/${folder}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
@@ -39,8 +67,18 @@ export const WhitepaperEdit = () => {
   };
 
   return (
-    <Edit saveButtonProps={saveButtonProps}>
-      <Form {...formProps} layout="vertical">
+    <Edit 
+        saveButtonProps={{ 
+            ...saveButtonProps, 
+            onClick: () => form.submit(), 
+            loading: loading 
+        }}
+    >
+      <Form 
+        {...formProps} 
+        layout="vertical"
+        onFinish={onFinish}
+      >
         <Form.Item label="Title" name="title" rules={[{ required: true }]}>
           <Input />
         </Form.Item>

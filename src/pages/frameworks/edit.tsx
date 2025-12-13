@@ -1,11 +1,16 @@
+import { useState } from "react";
 import { Edit, useForm } from "@refinedev/antd";
 import { Form, Input, Upload, Select, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { supabaseClient } from "../../utility/supabaseClient";
 import { RichTextEditor } from "../../components/RichTextEditor";
+import { useParams } from "react-router-dom";
 
 export const FrameworkEdit = () => {
+  const [loading, setLoading] = useState(false);
   const { formProps, saveButtonProps, form, queryResult } = useForm();
+  const { id } = useParams();
+
   const data = queryResult?.data?.data;
   
   // Mapped to diagram_url (or image_url fallbacks)
@@ -15,6 +20,30 @@ export const FrameworkEdit = () => {
     status: 'done', 
     url: data.diagram_url 
   }] : [];
+
+  const onFinish = async (values: any) => {
+    setLoading(true);
+    try {
+        const { error } = await supabaseClient
+            .from('frameworks')
+            .update({
+                title: values.title,
+                slug: values.slug,
+                description_html: values.description_html,
+                icon_name: values.icon_name,
+                outcomes: values.outcomes, // JSONB array
+                diagram_url: values.diagram_url
+            })
+            .eq('id', id); // Helper: Check App.tsx, frameworks uses :id
+        
+        if (error) throw error;
+        message.success("Framework updated successfully!");
+    } catch (err: any) {
+        message.error("Error saving framework: " + err.message);
+    } finally {
+        setLoading(false);
+    }
+  };
 
   const customRequest = async ({ file, onSuccess, onError }: any) => {
     try {
@@ -34,8 +63,18 @@ export const FrameworkEdit = () => {
   };
 
   return (
-    <Edit saveButtonProps={saveButtonProps}>
-      <Form {...formProps} layout="vertical">
+    <Edit 
+        saveButtonProps={{ 
+            ...saveButtonProps, 
+            onClick: () => form.submit(),
+            loading: loading 
+        }}
+    >
+      <Form 
+        {...formProps} 
+        layout="vertical"
+        onFinish={onFinish}
+      >
         <Form.Item label="Title" name="title" rules={[{ required: true }]}>
           <Input />
         </Form.Item>

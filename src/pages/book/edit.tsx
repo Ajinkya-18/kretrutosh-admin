@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Edit, useForm } from "@refinedev/antd";
 import { Form, Input, Upload, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
@@ -5,10 +6,40 @@ import { supabaseClient } from "../../utility/supabaseClient";
 import { RichTextEditor } from "../../components/RichTextEditor";
 
 export const BookEdit = () => {
-  const { formProps, saveButtonProps, form, queryResult } = useForm();
+  const [loading, setLoading] = useState(false);
+  const { formProps, saveButtonProps, form, queryResult } = useForm({
+    action: "edit",
+    id: 1, // Singleton
+    queryOptions: {
+        select: ({ data }) => ({ data })
+    }
+  });
+
   const data = queryResult?.data?.data;
   
   const defaultFileList = data?.cover_image ? [{ uid: '-1', name: 'current', status: 'done', url: data.cover_image }] : [];
+
+  const onFinish = async (values: any) => {
+    setLoading(true);
+    try {
+        const { error } = await supabaseClient
+            .from('book')
+            .upsert({ 
+                id: 1,
+                title: values.title,
+                amazon_link: values.amazon_link,
+                description_html: values.description_html,
+                cover_image: values.cover_image
+            });
+        
+        if (error) throw error;
+        message.success("Book updated successfully!");
+    } catch (err: any) {
+        message.error("Error saving data: " + err.message);
+    } finally {
+        setLoading(false);
+    }
+  };
 
   const customRequest = async ({ file, onSuccess, onError }: any) => {
     try {
@@ -22,8 +53,18 @@ export const BookEdit = () => {
   };
 
   return (
-    <Edit saveButtonProps={saveButtonProps}>
-      <Form {...formProps} layout="vertical">
+    <Edit 
+        saveButtonProps={{ 
+            ...saveButtonProps, 
+            onClick: () => form.submit(),
+            loading: loading
+        }}
+    >
+      <Form 
+        {...formProps} 
+        layout="vertical"
+        onFinish={onFinish}
+      >
         <Form.Item label="Book Title" name="title" rules={[{ required: true }]}><Input /></Form.Item>
         <Form.Item label="Amazon Link" name="amazon_link"><Input /></Form.Item>
         <Form.Item label="Description (Rich HTML)" name="description_html"><RichTextEditor /></Form.Item>
