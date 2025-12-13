@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Edit, useForm } from "@refinedev/antd";
 import { Form, Input, Card, Space, Button, Divider, Upload, message } from "antd";
 import { DeleteOutlined, PlusOutlined, UploadOutlined } from "@ant-design/icons";
@@ -7,6 +8,25 @@ export const ConfigNavbarEdit = () => {
   const { formProps, saveButtonProps, form, queryResult } = useForm();
   
   const data = queryResult?.data?.data;
+
+  // Migration Effect: Fix legacy keys (label->name, link->path)
+  useEffect(() => {
+    if (data?.menu_items) {
+        const mappedItems = data.menu_items.map((item: any) => ({
+            ...item,
+            name: item.name || item.label,
+            path: item.path || item.link
+        }));
+        
+        // Only set if we detect legacy keys to avoid infinite loops or overwriting
+        const needsUpdate = mappedItems.some((item: any) => !item.name && item.label);
+        // Actually, form might be empty initially if keys didn't match.
+        // Safety: Always set updated items if not modified by user yet?
+        // If we strictly rely on formProps, we get the legacy data.
+        // We override "menu_items" to ensure the Form List sees "name" and "path".
+        form.setFieldValue("menu_items", mappedItems);
+    }
+  }, [data]);
   
   const customRequest = async ({ file, onSuccess, onError }: any) => {
     try {
