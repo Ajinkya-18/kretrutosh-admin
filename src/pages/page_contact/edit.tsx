@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Edit, useForm } from "@refinedev/antd";
 import { Form, Input, message } from "antd";
 import { supabaseClient } from "../../utility/supabaseClient";
@@ -6,10 +6,21 @@ import { RichTextEditor } from "../../components/RichTextEditor";
 
 export const PageContactEdit = () => {
   const [loading, setLoading] = useState(false);
+  const [recordId, setRecordId] = useState<string | number | undefined>(undefined);
+
+  useEffect(() => {
+      const fetchId = async () => {
+          const { data } = await supabaseClient.from('page_contact').select('id').maybeSingle();
+          if (data) setRecordId(data.id);
+      }
+      fetchId();
+  }, []);
+
   const { formProps, saveButtonProps, form } = useForm({
     action: "edit",
-    id: 1, // Singleton
+    id: recordId,
     queryOptions: {
+        enabled: !!recordId,
         select: ({ data }) => ({ data })
     }
   });
@@ -17,10 +28,24 @@ export const PageContactEdit = () => {
   const onFinish = async (values: any) => {
     setLoading(true);
     try {
-        const { error } = await supabaseClient
+        let error;
+        if (recordId) {
+             const { error: updateError } = await supabaseClient
             .from('page_contact')
-            .upsert({ 
-                id: 1,
+            .update({ 
+                hero_title: values.hero_title,
+                address_html: values.address_html,
+                google_form_url: values.google_form_url,
+                calendly_url: values.calendly_url,
+                calendly_cta_text: values.calendly_cta_text,
+                map_embed: values.map_embed
+            })
+            .eq('id', recordId);
+            error = updateError;
+        } else {
+             const { error: insertError } = await supabaseClient
+            .from('page_contact')
+            .insert({ 
                 hero_title: values.hero_title,
                 address_html: values.address_html,
                 google_form_url: values.google_form_url,
@@ -28,6 +53,8 @@ export const PageContactEdit = () => {
                 calendly_cta_text: values.calendly_cta_text,
                 map_embed: values.map_embed
             });
+            error = insertError;
+        }
         
         if (error) throw error;
         message.success("Contact page updated successfully!");

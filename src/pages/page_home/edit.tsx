@@ -1,14 +1,23 @@
-import { useState } from "react";
-import { Edit, useForm } from "@refinedev/antd";
-import { Form, Input, message } from "antd";
-import { supabaseClient } from "../../utility/supabaseClient";
-
-export const PageHomeEdit = () => {
+  import { useState, useEffect } from "react";
+  // ... imports
+  
+  export const PageHomeEdit = () => {
   const [loading, setLoading] = useState(false);
+  const [recordId, setRecordId] = useState<string | number | undefined>(undefined);
+
+  useEffect(() => {
+      const fetchId = async () => {
+          const { data } = await supabaseClient.from('page_home').select('id').maybeSingle();
+          if (data) setRecordId(data.id);
+      }
+      fetchId();
+  }, []);
+
   const { formProps, saveButtonProps, form } = useForm({
     action: "edit",
-    id: 1, // Singleton
+    id: recordId,
     queryOptions: {
+        enabled: !!recordId,
         select: ({ data }) => ({ data })
     }
   });
@@ -16,16 +25,31 @@ export const PageHomeEdit = () => {
   const onFinish = async (values: any) => {
     setLoading(true);
     try {
-        const { error } = await supabaseClient
+        let error;
+        if (recordId) {
+             const { error: updateError } = await supabaseClient
             .from('page_home')
-            .upsert({ 
-                id: 1,
+            .update({ 
+                hero_title: values.hero_title,
+                hero_subtitle: values.hero_subtitle,
+                hero_video_url: values.hero_video_url,
+                growth_engine_title: values.growth_engine_title,
+                frameworks_title: values.frameworks_title
+            })
+            .eq('id', recordId);
+            error = updateError;
+        } else {
+             const { error: insertError } = await supabaseClient
+            .from('page_home')
+            .insert({ 
                 hero_title: values.hero_title,
                 hero_subtitle: values.hero_subtitle,
                 hero_video_url: values.hero_video_url,
                 growth_engine_title: values.growth_engine_title,
                 frameworks_title: values.frameworks_title
             });
+            error = insertError;
+        }
         
         if (error) throw error;
         message.success("Home configuration updated successfully!");

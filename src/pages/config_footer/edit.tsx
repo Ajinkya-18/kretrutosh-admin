@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Edit, useForm } from "@refinedev/antd";
 import { Form, Input, Card, Space, Button, message } from "antd";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
@@ -7,11 +7,23 @@ import { supabaseClient } from "../../utility/supabaseClient";
 export const ConfigFooterEdit = () => {
   const [loading, setLoading] = useState(false);
   
+  const [recordId, setRecordId] = useState<string | number | undefined>(undefined);
+
+  useEffect(() => {
+      const fetchId = async () => {
+          const { data } = await supabaseClient.from('config_footer').select('id').maybeSingle();
+          if (data) {
+              setRecordId(data.id);
+          }
+      }
+      fetchId();
+  }, []);
+  
   const { formProps, saveButtonProps, form } = useForm({
     action: "edit",
-    id: 1, // Singleton
+    id: recordId, // Dynamic ID
     queryOptions: {
-        // Ensure we fetch the singleton row 1 specifically, or any single row
+        enabled: !!recordId, // Only fetch when ID is ready
         select: ({ data }) => {
             return { data };
         }
@@ -21,13 +33,26 @@ export const ConfigFooterEdit = () => {
   const onFinish = async (values: any) => {
     setLoading(true);
     try {
-        const { error } = await supabaseClient
-            .from('config_footer')
-            .upsert({ 
-                id: 1,
-                copyright_text: values.copyright_text,
-                social_links: values.social_links 
-            }); // Upsert handles create-if-missing for ID 1
+        let error;
+        if (recordId) {
+            const { error: updateError } = await supabaseClient
+                .from('config_footer')
+                .update({ 
+                    copyright_text: values.copyright_text,
+                    social_links: values.social_links 
+                })
+                .eq('id', recordId);
+            error = updateError;
+        } else {
+             // Fallback: Create new if no ID found
+            const { error: insertError } = await supabaseClient
+                .from('config_footer')
+                .insert({ 
+                    copyright_text: values.copyright_text,
+                    social_links: values.social_links 
+                });
+            error = insertError;
+        }
         
         if (error) throw error;
         message.success("Footer updated successfully!");

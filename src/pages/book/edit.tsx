@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Edit, useForm } from "@refinedev/antd";
 import { Form, Input, Upload, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
@@ -7,10 +7,21 @@ import { RichTextEditor } from "../../components/RichTextEditor";
 
 export const BookEdit = () => {
   const [loading, setLoading] = useState(false);
+  const [recordId, setRecordId] = useState<string | number | undefined>(undefined);
+
+  useEffect(() => {
+      const fetchId = async () => {
+          const { data } = await supabaseClient.from('book').select('id').maybeSingle();
+          if (data) setRecordId(data.id);
+      }
+      fetchId();
+  }, []);
+
   const { formProps, saveButtonProps, form, queryResult } = useForm({
     action: "edit",
-    id: 1, // Singleton
+    id: recordId,
     queryOptions: {
+        enabled: !!recordId,
         select: ({ data }) => ({ data })
     }
   });
@@ -22,15 +33,29 @@ export const BookEdit = () => {
   const onFinish = async (values: any) => {
     setLoading(true);
     try {
-        const { error } = await supabaseClient
-            .from('book')
-            .upsert({ 
-                id: 1,
-                title: values.title,
-                amazon_link: values.amazon_link,
-                description_html: values.description_html,
-                cover_image: values.cover_image
-            });
+        let error;
+        if (recordId) {
+            const { error: updateError } = await supabaseClient
+                .from('book')
+                .update({ 
+                    title: values.title,
+                    amazon_link: values.amazon_link,
+                    description_html: values.description_html,
+                    cover_image: values.cover_image
+                })
+                .eq('id', recordId);
+            error = updateError;
+        } else {
+             const { error: insertError } = await supabaseClient
+                .from('book')
+                .insert({ 
+                    title: values.title,
+                    amazon_link: values.amazon_link,
+                    description_html: values.description_html,
+                    cover_image: values.cover_image
+                });
+            error = insertError;
+        }
         
         if (error) throw error;
         message.success("Book updated successfully!");
