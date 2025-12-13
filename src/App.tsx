@@ -74,6 +74,7 @@ import { PageContactList } from "./pages/page_contact/list";
 import { PageContactEdit } from "./pages/page_contact/edit";
 
 import { BookList } from "./pages/book/list";
+import { BookCreate } from "./pages/book/create";
 import { BookEdit } from "./pages/book/edit";
 
 
@@ -134,6 +135,7 @@ function App() {
           {
             name: "book",
             list: "/book",
+            create: "/book/create",
             edit: "/book/edit/:id",
             meta: { label: "Book: Age of Kretru" }
           },
@@ -378,6 +380,7 @@ function App() {
 
               <Route path="/book">
                   <Route index element={<BookList />} />
+                  <Route path="create" element={<BookCreate />} />
                   <Route path="edit/:id" element={<BookEdit />} />
               </Route>
 
