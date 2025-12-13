@@ -7,7 +7,7 @@ export const ConfigNavbarEdit = () => {
   const { formProps, saveButtonProps, form } = useForm({
     // 1. FORCE THE ID: Tell Refine strictly to edit Row #1
     action: "edit",
-    id: 1, 
+    id: 2, 
     
     // 2. SAFETY: Ensure we transform legacy data safely on fetch, not via useEffect
     queryOptions: {
