@@ -14,7 +14,7 @@ export const PageContactEdit = () => {
         <div className="p-4 bg-gray-50 rounded-lg mb-6 border border-gray-200">
             <h3 className="text-lg font-medium mb-4">Integrations</h3>
             <Form.Item 
-                label="Google Form Embed URL" 
+                label="Google Form Embed Source URL" 
                 name="google_form_url"
                 help="Paste the 'src' link from the Google Form Embed HTML (starts with https://docs.google.com...)"
             >
@@ -29,7 +29,7 @@ export const PageContactEdit = () => {
                 >
                     <Input placeholder="https://calendly.com/your-link" />
                 </Form.Item>
-                <Form.Item label="Calendly Button Text" name="calendly_cta_text">
+                <Form.Item label="Button Label" name="calendly_cta_text">
                     <Input placeholder="Book a Strategy Call" />
                 </Form.Item>
             </div>

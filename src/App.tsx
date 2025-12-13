@@ -95,13 +95,13 @@ function App() {
           routerProvider={routerBindings}
           notificationProvider={useNotificationProvider}
           resources={[
-          // GROUP A (Off-Limits) & GROUP B (Evolved)
+          // GROUP A: Core Content (Protected/Standard)
           {
             name: "blogs",
             list: "/blogs",
             create: "/blogs/create",
             edit: "/blogs/edit/:id",
-            meta: { label: "Articles / Blogs" }
+            meta: { label: "Articles & Blogs" }
           },
           {
             name: "whitepapers",
@@ -129,102 +129,75 @@ function App() {
             list: "/client_logos",
             create: "/client_logos/create",
             edit: "/client_logos/edit/:id",
-            meta: { label: "Client Logos" }
+            meta: { label: "Clients / Logos" }
           },
           {
-            name: "services", // Group B
-            list: "/services",
-            create: "/services/create",
-            edit: "/services/edit/:slug", // Use slug!
-            meta: { label: "Services" }
+            name: "book",
+            list: "/book",
+            edit: "/book/edit/:id",
+            meta: { label: "Book: Age of Kretru" }
           },
           {
-            name: "frameworks", // Group B
-            list: "/frameworks",
-            create: "/frameworks/create",
-            edit: "/frameworks/edit/:id",
-            meta: { label: "Frameworks" }
-          },
-          {
-            name: "industries", // Group B
-            list: "/industries",
-            create: "/industries/create",
-            edit: "/industries/edit/:id",
-            meta: { label: "Industries" }
-          },
-          {
-            name: "assessments", // Group B
+            name: "assessments",
             list: "/assessments",
             create: "/assessments/create",
             edit: "/assessments/edit/:id",
             meta: { label: "Assessments" }
           },
 
-          // GROUP C (New Config)
+          // GROUP B: Entity Tables (Refactored)
           {
-            name: "config_navbar",
-            list: "/config_navbar",
-            edit: "/config_navbar/edit/:id",
-            meta: { label: "Config: Navbar" }
+            name: "services", 
+            list: "/services",
+            create: "/services/create",
+            edit: "/services/edit/:slug",
+            meta: { label: "Services" }
           },
           {
-            name: "config_footer",
-            list: "/config_footer",
-            edit: "/config_footer/edit/:id",
-            meta: { label: "Config: Footer" }
+            name: "industries", 
+            list: "/industries",
+            create: "/industries/create",
+            edit: "/industries/edit/:id",
+            meta: { label: "Industries" }
           },
+          {
+            name: "frameworks", 
+            list: "/frameworks",
+            create: "/frameworks/create",
+            edit: "/frameworks/edit/:id",
+            meta: { label: "Frameworks" }
+          },
+
+          // GROUP C: Pages & Config (New 15-Table Architecture)
           {
             name: "page_home",
             list: "/page_home",
             edit: "/page_home/edit/:id",
-            meta: { label: "Page: Home" }
+            meta: { label: "Home Page" }
           },
           {
             name: "page_about",
             list: "/page_about",
             edit: "/page_about/edit/:id",
-            meta: { label: "Page: About" }
+            meta: { label: "About Page" }
           },
           {
             name: "page_contact",
             list: "/page_contact",
             edit: "/page_contact/edit/:id",
-            meta: { label: "Page: Contact" }
+            meta: { label: "Contact Page" }
           },
           {
-            name: "book",
-            list: "/book",
-            edit: "/book/edit/:id",
-            meta: { label: "Book" }
-          },
-          
-          
-          {
-            name: "pages",
-            list: "/pages",
-            edit: "/pages/edit/:id",
-            meta: { label: "SEO Manager" } 
+            name: "config_navbar",
+            list: "/config_navbar",
+            edit: "/config_navbar/edit/:id",
+            meta: { label: "Navbar Config" }
           },
           {
-            name: "website_content",
-            list: "/website-content",
-            create: "/website-content/create",
-            edit: "/website-content/edit/:id",
-            meta: { label: "Site Text & Labels" }
-          },
-          {
-            name: "ui_components",
-            list: "/ui_components",
-            create: "/ui_components/create",
-            edit: "/ui_components/edit/:id",
-            meta: { label: "UI Components" }
-          },
-          {
-            name: "testimonials",
-            list: "/testimonials",
-            create: "/testimonials/create",
-            edit: "/testimonials/edit/:id",
-            meta: { label: "Testimonials" }
+            name: "config_footer",
+            list: "/config_footer",
+            edit: "/config_footer/edit/:id",
+            meta: { label: "Footer Config" }
           }
         ]}
           options={{

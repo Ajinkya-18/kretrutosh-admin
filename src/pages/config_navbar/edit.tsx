@@ -52,16 +52,16 @@ export const ConfigNavbarEdit = () => {
                         <Space style={{ display: 'flex', width: '100%' }} align="baseline">
                             <Form.Item
                                 {...restField}
-                                name={[name, 'label']}
-                                label="Label"
+                                name={[name, 'name']}
+                                label="Label Name"
                                 rules={[{ required: true }]}
                             >
                                 <Input placeholder="About" />
                             </Form.Item>
                             <Form.Item
                                 {...restField}
-                                name={[name, 'link']}
-                                label="Link"
+                                name={[name, 'path']}
+                                label="Path / Link"
                                 rules={[{ required: true }]}
                             >
                                 <Input placeholder="/about" />
