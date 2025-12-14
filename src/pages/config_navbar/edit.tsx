@@ -51,6 +51,7 @@ export const ConfigNavbarEdit = () => {
         .from('config_navbar')
         .update({
           logo_url: values.logo_url,
+          cta_text: values.cta_text,
           cta_link: values.cta_link,
           menu_items: values.menu_items
         })
@@ -111,6 +112,14 @@ export const ConfigNavbarEdit = () => {
             rules={[{ required: true, message: 'Please enter a CTA link' }]}
         >
           <Input placeholder="/contact" />
+        </Form.Item>
+
+        <Form.Item 
+            label="CTA Button Text" 
+            name="cta_text"
+            rules={[{ required: true, message: 'Please enter CTA button text' }]}
+        >
+          <Input placeholder="Schedule Consultation" />
         </Form.Item>
 
         <Form.Item label="Logo URL" name="logo_url">
