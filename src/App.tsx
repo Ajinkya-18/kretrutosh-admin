@@ -2,6 +2,7 @@ import { Authenticated, Refine } from "@refinedev/core";
 import { DevtoolsPanel, DevtoolsProvider } from "@refinedev/devtools";
 import { useNotificationProvider } from "@refinedev/antd";
 import "@refinedev/antd/dist/reset.css";
+import { ConfigProvider, theme as antdTheme } from "antd";
 
 import routerBindings, {
   DocumentTitleHandler,
@@ -88,6 +89,36 @@ import { PagesEdit } from "./pages/pages/edit";
 // Start App
 function App() {
   return (
+    <ConfigProvider
+      theme={{
+        token: {
+          colorPrimary: '#FF9933',        // Saffron for primary buttons, links
+          colorLink: '#FF9933',           // Saffron for links
+          colorBgLayout: '#F3F4F6',       // Light gray background
+          colorBgContainer: '#FFFFFF',    // White for cards/containers
+          fontFamily: 'Inter, sans-serif', // Premium font stack
+        },
+        components: {
+          Layout: {
+            siderBg: '#0B1C3E',           // Navy sidebar
+            headerBg: '#FFFFFF',          // White header
+            bodyBg: '#F3F4F6',            // Light gray body
+          },
+          Menu: {
+            darkItemBg: '#0B1C3E',        // Navy menu background
+            darkItemSelectedBg: '#FF9933', // Saffron selected item
+            darkItemHoverBg: 'rgba(255, 153, 51, 0.1)', // Saffron hover (10% opacity)
+            darkItemColor: '#FFFFFF',      // White text
+            darkItemSelectedColor: '#FFFFFF', // White selected text
+          },
+          Button: {
+            colorPrimary: '#FF9933',       // Saffron primary buttons
+            colorPrimaryHover: '#FF9933DD', // Saffron hover (87% opacity)
+          },
+        },
+        algorithm: antdTheme.defaultAlgorithm,
+      }}
+    >
       <DevtoolsProvider>
         <Refine
           dataProvider={dataProvider(supabaseClient)}
@@ -402,6 +433,7 @@ function App() {
         </Refine>
         <DevtoolsPanel />
       </DevtoolsProvider>
+    </ConfigProvider>
   );
 }
 
