@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { List, useTable, EditButton, DeleteButton, ShowButton } from "@refinedev/antd";
 import { Table, Space, message } from "antd";
 import { GripVertical } from "lucide-react";
@@ -71,11 +71,12 @@ export const VideoList = () => {
 
   const [dataSource, setDataSource] = useState<any[]>([]);
 
-  useState(() => {
+  // Sync dataSource with table data when it changes
+  useEffect(() => {
     if (tableQueryResult?.data?.data) {
       setDataSource(tableQueryResult.data.data);
     }
-  });
+  }, [tableQueryResult?.data?.data]);
 
   const sensors = useSensors(useSensor(PointerSensor));
 
