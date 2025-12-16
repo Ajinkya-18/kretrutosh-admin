@@ -23,7 +23,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 
 // Sortable menu item component
-const SortableMenuItem = ({ id, index, name, remove, children }: any) => {
+const SortableMenuItem = ({ id, name, remove, children }: any) => {
   const {
     attributes,
     listeners,
@@ -254,7 +254,6 @@ export const ConfigNavbarEdit = () => {
                       <SortableMenuItem
                         key={menuItems[index]?.id || key}
                         id={menuItems[index]?.id || `item-${index}`}
-                        index={index}
                         name={name}
                         remove={remove}
                       >
