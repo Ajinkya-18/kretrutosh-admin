@@ -266,10 +266,13 @@ function App() {
                   <AuthPage
                     type="login"
                     title={
-                      <ThemedTitleV2
-                        collapsed={false}
-                        text="Kretrutosh Admin"
-                      />
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
+                        <img 
+                          src="/kretrutosh-logo.png" 
+                          alt="Kretrutosh Consulting" 
+                          style={{ height: '48px', maxWidth: '200px', objectFit: 'contain' }}
+                        />
+                      </div>
                     }
                     providers={[
                       {
@@ -294,10 +297,25 @@ function App() {
                 >
                   <ThemedLayoutV2
                     Title={({ collapsed }: { collapsed: boolean }) => (
-                      <ThemedTitleV2
-                        collapsed={collapsed}
-                        text="Kretrutosh Admin"
-                      />
+                      <div style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: collapsed ? 'center' : 'flex-start',
+                        padding: collapsed ? '8px' : '12px 16px',
+                        transition: 'all 0.2s'
+                      }}>
+                        <img 
+                          src="/kretrutosh-logo.png" 
+                          alt="Kretrutosh" 
+                          style={{ 
+                            height: collapsed ? '32px' : '40px',
+                            maxWidth: collapsed ? '32px' : '160px',
+                            objectFit: 'contain',
+                            transition: 'all 0.2s',
+                            filter: 'brightness(0) invert(1)' // Make logo white for Navy background
+                          }}
+                        />
+                      </div>
                     )}
                     Sider={(props: any) => <ThemedSiderV2 {...props} fixed />}
                   >
