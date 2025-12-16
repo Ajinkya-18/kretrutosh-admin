@@ -92,16 +92,21 @@ export const FrameworkList = () => {
     setDataSource(reordered);
 
     try {
-      const updates = reordered.map((item: any, index: number) => ({
-        id: item.id,
-        display_order: index,
-      }));
+      // Update each item individually to avoid NOT NULL constraint issues
+      const updatePromises = reordered.map((item: any, index: number) =>
+        supabaseClient
+          .from('frameworks')
+          .update({ display_order: index })
+          .eq('id', item.id)
+      );
 
-      const { error } = await supabaseClient
-        .from('frameworks')
-        .upsert(updates, { onConflict: 'id' });
-
-      if (error) throw error;
+      const results = await Promise.all(updatePromises);
+      
+      // Check for errors
+      const errors = results.filter(r => r.error);
+      if (errors.length > 0) {
+        throw errors[0].error;
+      }
 
       message.success('Framework order updated successfully');
       tableQueryResult?.refetch();
