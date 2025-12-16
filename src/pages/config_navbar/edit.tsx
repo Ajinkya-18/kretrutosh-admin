@@ -104,14 +104,23 @@ export const ConfigNavbarEdit = () => {
             ...item,
             name: item.name || item.label,
             path: item.path || item.link,
-            order: item.order ?? index, // Preserve or assign order
-            id: `item-${index}`, // Unique ID for DnD
+            order: item.order ?? index,
+            id: `item-${index}`,
         }));
-        setMenuItems(mappedItems);
         return { data: { ...responseData, menu_items: mappedItems } };
       },
     },
   });
+
+  // Sync menuItems state when form data loads
+  useEffect(() => {
+    if (formProps.initialValues?.menu_items) {
+      const items = formProps.initialValues.menu_items;
+      if (Array.isArray(items) && items.length > 0) {
+        setMenuItems(items);
+      }
+    }
+  }, [formProps.initialValues]);
 
   // DnD sensors
   const sensors = useSensors(
@@ -247,7 +256,7 @@ export const ConfigNavbarEdit = () => {
                   onDragEnd={handleDragEnd}
                 >
                   <SortableContext
-                    items={menuItems.map(item => item.id)}
+                    items={(menuItems || []).map(item => item?.id || `fallback-${Math.random()}`)}
                     strategy={verticalListSortingStrategy}
                   >
                     {fields.map(({ key, name, ...restField }, index) => (
