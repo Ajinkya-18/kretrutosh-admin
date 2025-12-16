@@ -2,11 +2,85 @@ import { useEffect, useState } from "react";
 import { Edit, useForm } from "@refinedev/antd";
 import { Form, Input, Card, Space, Button, Divider, Upload, message } from "antd";
 import { DeleteOutlined, PlusOutlined, UploadOutlined } from "@ant-design/icons";
+import { GripVertical } from "lucide-react";
 import { supabaseClient } from "../../utility/supabaseClient";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+
+// Sortable menu item component
+const SortableMenuItem = ({ id, index, name, remove, children }: any) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style}>
+      <Card 
+        size="small" 
+        style={{ 
+          marginBottom: 8, 
+          background: '#f9f9f9',
+          cursor: isDragging ? 'grabbing' : 'default',
+        }}
+      >
+        <Space style={{ display: 'flex', width: '100%' }} align="baseline">
+          {/* Drag Handle */}
+          <div
+            {...attributes}
+            {...listeners}
+            style={{ 
+              cursor: 'grab',
+              padding: '4px',
+              color: '#999',
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
+            <GripVertical size={20} />
+          </div>
+          
+          {children}
+          
+          <DeleteOutlined 
+            onClick={() => remove(name)} 
+            style={{ color: 'red', cursor: 'pointer' }}
+          />
+        </Space>
+      </Card>
+    </div>
+  );
+};
 
 export const ConfigNavbarEdit = () => {
   const [loading, setLoading] = useState(false);
   const [recordId, setRecordId] = useState<string | number | undefined>(undefined);
+  const [menuItems, setMenuItems] = useState<any[]>([]);
 
   useEffect(() => {
       const fetchId = async () => {
@@ -20,24 +94,50 @@ export const ConfigNavbarEdit = () => {
 
   const { formProps, saveButtonProps, form } = useForm({
     action: "edit",
-    id: recordId, // Use dynamic ID
+    id: recordId,
     queryOptions: {
-      enabled: !!recordId, // Only fetch when ID is ready
+      enabled: !!recordId,
       select: ({ data }) => {
         const responseData = data;
-        // Transform legacy keys if they exist
         const menuItems = responseData.menu_items || [];
-        const mappedItems = menuItems.map((item: any) => ({
+        const mappedItems = menuItems.map((item: any, index: number) => ({
             ...item,
             name: item.name || item.label,
-            path: item.path || item.link 
+            path: item.path || item.link,
+            order: item.order ?? index, // Preserve or assign order
+            id: `item-${index}`, // Unique ID for DnD
         }));
+        setMenuItems(mappedItems);
         return { data: { ...responseData, menu_items: mappedItems } };
       },
     },
   });
 
-  // MANUAL SAVE HANDLER (Bypasses Refine's default logic to ensure it works)
+  // DnD sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  // Handle drag end
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      const oldIndex = menuItems.findIndex((item) => item.id === active.id);
+      const newIndex = menuItems.findIndex((item) => item.id === over.id);
+
+      const newItems = arrayMove(menuItems, oldIndex, newIndex);
+      setMenuItems(newItems);
+      
+      // Update form field with reordered items
+      form.setFieldValue('menu_items', newItems);
+    }
+  };
+
+  // MANUAL SAVE HANDLER
   const onFinish = async (values: any) => {
     if (!recordId) {
         message.error("No record ID found to update.");
@@ -45,7 +145,11 @@ export const ConfigNavbarEdit = () => {
     }
     setLoading(true);
     try {
-      console.log("Saving Values:", values); // Debugging
+      // Add order field to each menu item before saving
+      const orderedMenuItems = (values.menu_items || []).map((item: any, index: number) => ({
+        ...item,
+        order: index,
+      }));
 
       const { error } = await supabaseClient
         .from('config_navbar')
@@ -53,9 +157,9 @@ export const ConfigNavbarEdit = () => {
           logo_url: values.logo_url,
           cta_text: values.cta_text,
           cta_link: values.cta_link,
-          menu_items: values.menu_items
+          menu_items: orderedMenuItems,
         })
-        .eq('id', recordId); // Use dynamic ID
+        .eq('id', recordId);
 
       if (error) {
         throw error;
@@ -119,7 +223,7 @@ export const ConfigNavbarEdit = () => {
             name="cta_text"
             rules={[{ required: true, message: 'Please enter CTA button text' }]}
         >
-          <Input placeholder="Schedule Consultation" />
+          <Input placeholder="Book Strategy Call" />
         </Form.Item>
 
         <Form.Item label="Logo URL" name="logo_url">
@@ -133,33 +237,49 @@ export const ConfigNavbarEdit = () => {
              </Upload.Dragger>
         </Form.Item>
 
-        <Divider orientation="left">Menu Items</Divider>
+        <Divider orientation="left">Menu Items - Drag to Reorder</Divider>
         <Form.List name="menu_items">
             {(fields, { add, remove }) => (
                 <>
-                {fields.map(({ key, name, ...restField }) => (
-                    <Card size="small" style={{ marginBottom: 8, background: '#f9f9f9' }} key={key}>
-                        <Space style={{ display: 'flex', width: '100%' }} align="baseline">
-                            <Form.Item
-                                {...restField}
-                                name={[name, 'name']}
-                                label="Label Name"
-                                rules={[{ required: true, message: 'Missing name' }]}
-                            >
-                                <Input placeholder="About" />
-                            </Form.Item>
-                            <Form.Item
-                                {...restField}
-                                name={[name, 'path']}
-                                label="Path / Link"
-                                rules={[{ required: true, message: 'Missing path' }]}
-                            >
-                                <Input placeholder="/about" />
-                            </Form.Item>
-                            <DeleteOutlined onClick={() => remove(name)} style={{ color: 'red' }}/>
-                        </Space>
-                    </Card>
-                ))}
+                <DndContext
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragEnd={handleDragEnd}
+                >
+                  <SortableContext
+                    items={menuItems.map(item => item.id)}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    {fields.map(({ key, name, ...restField }, index) => (
+                      <SortableMenuItem
+                        key={menuItems[index]?.id || key}
+                        id={menuItems[index]?.id || `item-${index}`}
+                        index={index}
+                        name={name}
+                        remove={remove}
+                      >
+                        <Form.Item
+                            {...restField}
+                            name={[name, 'name']}
+                            label="Label Name"
+                            rules={[{ required: true, message: 'Missing name' }]}
+                            style={{ marginBottom: 0, flex: 1 }}
+                        >
+                            <Input placeholder="About" />
+                        </Form.Item>
+                        <Form.Item
+                            {...restField}
+                            name={[name, 'path']}
+                            label="Path / Link"
+                            rules={[{ required: true, message: 'Missing path' }]}
+                            style={{ marginBottom: 0, flex: 1 }}
+                        >
+                            <Input placeholder="/about" />
+                        </Form.Item>
+                      </SortableMenuItem>
+                    ))}
+                  </SortableContext>
+                </DndContext>
                 <Form.Item>
                     <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
                     Add Menu Item
