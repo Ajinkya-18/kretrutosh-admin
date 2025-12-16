@@ -1,16 +1,19 @@
 import { useState, useEffect } from "react";
 import { Edit, useForm } from "@refinedev/antd";
-import { Form, Input, Switch, Button as AntButton, Card, Space, message } from "antd";
-import { ArrowUpOutlined, ArrowDownOutlined } from "@ant-design/icons";
+import { Form, Input, Switch, Card, Space, message, Tag, Typography } from "antd";
 import { supabaseClient } from "../../utility";
+import { SortableList, SortableItem } from "../../components/builder";
+
+const { Text } = Typography;
 
 interface SectionItem {
   key: string;
   label: string;
+  locked?: boolean;
 }
 
 const DEFAULT_SECTIONS: SectionItem[] = [
-  { key: "hero", label: "Hero Section" },
+  { key: "hero", label: "Hero Section", locked: true },
   { key: "growth_engine", label: "Growth Engine (Services)" },
   { key: "frameworks", label: "Frameworks Grid" },
   { key: "outcomes", label: "Outcomes / Impact Metrics" },
@@ -46,28 +49,17 @@ export const PageHomeEdit = () => {
     }
   });
 
-  // Move section up in order
-  const moveUp = (index: number) => {
-    if (index === 0) return;
-    const newOrder = [...layoutOrder];
-    [newOrder[index], newOrder[index - 1]] = [newOrder[index - 1], newOrder[index]];
-    setLayoutOrder(newOrder);
-  };
-
-  // Move section down in order
-  const moveDown = (index: number) => {
-    if (index === layoutOrder.length - 1) return;
-    const newOrder = [...layoutOrder];
-    [newOrder[index], newOrder[index + 1]] = [newOrder[index + 1], newOrder[index]];
-    setLayoutOrder(newOrder);
-  };
-
   // Toggle section visibility
   const toggleVisibility = (key: string) => {
     setSectionVisibility(prev => ({
       ...prev,
       [key]: !prev[key]
     }));
+  };
+
+  // Handle reorder via drag-and-drop
+  const handleReorder = (reorderedSections: SectionItem[]) => {
+    setLayoutOrder(reorderedSections.map(s => s.key));
   };
 
   const onFinish = async (values: any) => {
@@ -110,6 +102,16 @@ export const PageHomeEdit = () => {
     return DEFAULT_SECTIONS.find(s => s.key === key)?.label || key;
   };
 
+  // Build sections array for drag-and-drop
+  const sections: SectionItem[] = layoutOrder.map(key => {
+    const section = DEFAULT_SECTIONS.find(s => s.key === key);
+    return {
+      key,
+      label: section?.label || key,
+      locked: section?.locked || false
+    };
+  });
+
   return (
     <Edit 
       saveButtonProps={{ 
@@ -145,54 +147,50 @@ export const PageHomeEdit = () => {
           </Form.Item>
         </Card>
 
-        {/* Layout Manager */}
-        <Card title="🎨 Layout Manager" className="mb-4">
-          <p className="text-gray-600 mb-4">
-            Drag sections up/down to reorder them on the homepage. Toggle visibility to show/hide sections.
+        {/* Drag-and-Drop Layout Manager */}
+        <Card title="🎨 Homepage Structure - Drag to Reorder" className="mb-4">
+          <p style={{ color: '#666', marginBottom: 16 }}>
+            Drag sections to reorder them on the homepage. Toggle visibility to show/hide sections.
           </p>
           
-          {layoutOrder.map((sectionKey, index) => {
-            const isVisible = sectionVisibility[sectionKey] !== false;
-            
-            return (
-              <div 
-                key={sectionKey}
-                className={`flex items-center justify-between p-3 mb-2 border rounded ${!isVisible ? 'bg-gray-100 opacity-60' : 'bg-white'}`}
-              >
-                <div className="flex items-center gap-3">
-                  <span className="text-gray-500 font-mono text-sm">#{index + 1}</span>
-                  <span className="font-medium">{getSectionLabel(sectionKey)}</span>
-                  <span className="text-xs text-gray-400">({sectionKey})</span>
-                </div>
+          <SortableList
+            items={sections}
+            getId={(section) => section.key}
+            onReorder={handleReorder}
+            renderItem={(section, index) => {
+              const isVisible = sectionVisibility[section.key] !== false;
+              
+              return (
+                <SortableItem 
+                  id={section.key} 
+                  disabled={section.locked}
+                  showHandle={true}
+                >
+                  <Space style={{ width: '100%', justifyContent: 'space-between' }} align="center">
+                    <div>
+                      <Space>
+                        <Text type="secondary" style={{ fontFamily: 'monospace', fontSize: 12 }}>
+                          #{index + 1}
+                        </Text>
+                        <Text strong>{section.label}</Text>
+                        {section.locked && <Tag color="gold">Locked</Tag>}
+                        {!isVisible && <Tag color="default">Hidden</Tag>}
+                      </Space>
+                    </div>
+                    <Switch 
+                      checked={isVisible}
+                      onChange={() => toggleVisibility(section.key)}
+                      checkedChildren="Visible"
+                      unCheckedChildren="Hidden"
+                    />
+                  </Space>
+                </SortableItem>
+              );
+            }}
+          />
 
-                <Space>
-                  <Switch 
-                    checked={isVisible}
-                    onChange={() => toggleVisibility(sectionKey)}
-                    checkedChildren="Visible"
-                    unCheckedChildren="Hidden"
-                  />
-                  
-                  <AntButton 
-                    size="small"
-                    icon={<ArrowUpOutlined />}
-                    onClick={() => moveUp(index)}
-                    disabled={index === 0}
-                  />
-                  
-                  <AntButton 
-                    size="small"
-                    icon={<ArrowDownOutlined />}
-                    onClick={() => moveDown(index)}
-                    disabled={index === layoutOrder.length - 1}
-                  />
-                </Space>
-              </div>
-            );
-          })}
-
-          <p className="text-xs text-gray-500 mt-4">
-            💡 Pro tip: Changes will be reflected on the website instantly via real-time sync.
+          <p style={{ fontSize: 12, color: '#999', marginTop: 16 }}>
+            💡 Pro tip: Hero section is locked at the top. Changes reflect instantly via real-time sync.
           </p>
         </Card>
       </Form>
