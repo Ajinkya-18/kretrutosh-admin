@@ -129,10 +129,10 @@ function App() {
           resources={[
           // GROUP A: Core Content (Protected/Standard)
           {
-            name: "blogs",
-            list: "/blogs",
-            create: "/blogs/create",
-            edit: "/blogs/edit/:id",
+            name: "articles",
+            list: "/articles",
+            create: "/articles/create",
+            edit: "/articles/edit/:id",
             meta: { label: "Articles & Blogs" }
           },
           {
@@ -347,7 +347,7 @@ function App() {
                   <Route path="edit/:id" element={<VideoEdit />} />
               </Route>
 
-              <Route path="/blogs">
+              <Route path="/articles">
                   <Route index element={<BlogList />} />
                   <Route path="create" element={<BlogCreate />} />
                   <Route path="edit/:id" element={<BlogEdit />} />
