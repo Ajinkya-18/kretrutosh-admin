@@ -1,0 +1,5 @@
+              <Route path="/outcomes">
+                  <Route index element={<OutcomeList />} />
+                  <Route path="create" element={<OutcomeCreate />} />
+                  <Route path="edit/:id" element={<OutcomeEdit />} />
+              </Route>

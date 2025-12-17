@@ -78,6 +78,10 @@ import { BookList } from "./pages/book/list";
 import { BookCreate } from "./pages/book/create";
 import { BookEdit } from "./pages/book/edit";
 
+import { OutcomeList } from "./pages/outcomes/list";
+import { OutcomeCreate } from "./pages/outcomes/create";
+import { OutcomeEdit } from "./pages/outcomes/edit";
+
 
 import { UIComponentsList } from "./pages/ui_components/list";
 import { UIComponentsCreate } from "./pages/ui_components/create";
@@ -199,6 +203,13 @@ function App() {
             create: "/frameworks/create",
             edit: "/frameworks/edit/:id",
             meta: { label: "Frameworks" }
+          },
+          {
+            name: "outcomes",
+            list: "/outcomes",
+            create: "/outcomes/create",
+            edit: "/outcomes/edit/:id",
+            meta: { label: "Measurable Outcomes" }
           },
 
           // GROUP C: Pages & Config (New 15-Table Architecture)
@@ -431,6 +442,12 @@ function App() {
                   <Route index element={<BookList />} />
                   <Route path="create" element={<BookCreate />} />
                   <Route path="edit/:id" element={<BookEdit />} />
+              </Route>
+
+              <Route path="/outcomes">
+                  <Route index element={<OutcomeList />} />
+                  <Route path="create" element={<OutcomeCreate />} />
+                  <Route path="edit/:id" element={<OutcomeEdit />} />
               </Route>
 
 
