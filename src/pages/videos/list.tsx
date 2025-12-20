@@ -78,6 +78,7 @@ export const VideoList = () => {
     }
   }, [tableQueryResult?.data?.data]);
 
+
   const sensors = useSensors(useSensor(PointerSensor));
 
   const handleDragEnd = async (event: DragEndEvent) => {
@@ -85,34 +86,41 @@ export const VideoList = () => {
 
     if (!over || active.id === over.id) return;
 
-    const data = tableQueryResult?.data?.data || [];
-    const oldIndex = data.findIndex((item: any) => item.id === active.id);
-    const newIndex = data.findIndex((item: any) => item.id === over.id);
+    // Use dataSource state instead of tableQueryResult
+    const oldIndex = dataSource.findIndex((item: any) => item.id === active.id);
+    const newIndex = dataSource.findIndex((item: any) => item.id === over.id);
 
-    const reordered = arrayMove(data, oldIndex, newIndex);
+    const reordered = arrayMove(dataSource, oldIndex, newIndex);
+    
+    // Update UI immediately (Optimistic update)
     setDataSource(reordered);
 
     try {
-      // Update each item individually to avoid NOT NULL constraint issues
-      const updatePromises = reordered.map((item: any, index: number) =>
-        supabaseClient
-          .from('videos')
-          .update({ display_order: index })
-          .eq('id', item.id)
-      );
+      // Prepare batch update with new display_order indices
+      const updates = reordered.map((video: any, index: number) => ({
+        id: video.id,
+        display_order: index,
+      }));
 
-      const results = await Promise.all(updatePromises);
-      
-      // Check for errors
-      const errors = results.filter(r => r.error);
-      if (errors.length > 0) {
-        throw errors[0].error;
+      // Batch upsert to Supabase
+      const { error } = await supabaseClient
+        .from('videos')
+        .upsert(updates, { onConflict: 'id' });
+
+      if (error) {
+        throw error;
       }
 
       message.success('Video order updated successfully');
+      console.log('✅ Video reorder saved to database');
+      
+      // Refetch to ensure sync
       tableQueryResult?.refetch();
     } catch (error: any) {
+      console.error('❌ Reorder failed:', error);
       message.error('Failed to update order: ' + error.message);
+      
+      // Revert to original order on error
       tableQueryResult?.refetch();
     }
   };
