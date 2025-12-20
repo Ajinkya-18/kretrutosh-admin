@@ -125,12 +125,12 @@ export const VideoList = () => {
         onDragEnd={handleDragEnd}
       >
         <SortableContext
-          items={(tableQueryResult?.data?.data || []).map((item: any) => item.id)}
+          items={dataSource.map((item: any) => item.id)}
           strategy={verticalListSortingStrategy}
         >
           <Table
             {...tableProps}
-            dataSource={tableQueryResult?.data?.data}
+            dataSource={dataSource}
             rowKey="id"
             pagination={false}
             components={{
