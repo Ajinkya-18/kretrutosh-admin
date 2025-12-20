@@ -8,8 +8,10 @@ import { useParams } from "react-router-dom";
 
 export const ServiceEdit = () => {
     const [loading, setLoading] = useState(false);
-    const { formProps, saveButtonProps, form, queryResult } = useForm();
-    const { id } = useParams(); // Get ID from URL for collections
+    const { slug } = useParams(); // Get slug from URL
+    const { formProps, saveButtonProps, form, queryResult } = useForm({
+        id: slug, // Tell Refine to fetch the record with this slug
+    });
 
     // Image handling logic
     const serviceData = queryResult?.data?.data;
@@ -35,7 +37,7 @@ export const ServiceEdit = () => {
                     approach_html: values.approach_html,
                     outcomes_list: values.outcomes_list // JSONB array
                 })
-                .eq('slug', id); // Service seems to use :slug in App.tsx! Check App.tsx. 
+                .eq('slug', slug); // Service seems to use :slug in App.tsx! Check App.tsx. 
                 // App.tsx says: edit: "/services/edit/:slug"
                 // So 'id' from params is the slug. 
                 // BUT does Supabase update by slug or ID? 

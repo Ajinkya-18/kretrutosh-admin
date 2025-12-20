@@ -7,8 +7,10 @@ import { useParams } from "react-router-dom";
 
 export const IndustryEdit = () => {
   const [loading, setLoading] = useState(false);
-  const { formProps, saveButtonProps, form } = useForm();
   const { id } = useParams();
+  const { formProps, saveButtonProps, form } = useForm({
+    id: id, // Tell Refine to fetch the record with this id
+  });
 
   const onFinish = async (values: any) => {
     setLoading(true);
