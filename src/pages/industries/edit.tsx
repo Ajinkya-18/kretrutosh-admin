@@ -9,6 +9,8 @@ export const IndustryEdit = () => {
   const [loading, setLoading] = useState(false);
   const { id } = useParams();
   const { formProps, saveButtonProps, form } = useForm({
+    resource: "industries",
+    action: "edit",
     id: id, // Tell Refine to fetch the record with this id
   });
 

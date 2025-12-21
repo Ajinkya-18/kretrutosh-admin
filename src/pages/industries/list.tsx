@@ -173,8 +173,8 @@ export const IndustryList = () => {
               dataIndex="actions"
               render={(_, record: any) => (
                 <Space>
-                  <EditButton hideText size="small" recordItemId={record.id} />
-                  <DeleteButton hideText size="small" recordItemId={record.id} />
+                  <EditButton hideText size="small" recordItemId={record.id} resource="industries"/>
+                  <DeleteButton hideText size="small" recordItemId={record.id} resource="industries"/>
                 </Space>
               )}
             />
