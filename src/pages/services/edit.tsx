@@ -10,7 +10,12 @@ export const ServiceEdit = () => {
     const [loading, setLoading] = useState(false);
     const { slug } = useParams(); // Get slug from URL
     const { formProps, saveButtonProps, form, queryResult } = useForm({
+        resource: "services",
+        action: "edit", 
         id: slug, // Tell Refine to fetch the record with this slug
+        meta: {
+            idColumnName: "slug",
+        }
     });
 
     // Image handling logic
