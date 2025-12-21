@@ -163,8 +163,8 @@ export const FrameworkList = () => {
               dataIndex="actions"
               render={(_, record: any) => (
                 <Space>
-                  <EditButton hideText size="small" recordItemId={record.id} />
-                  <DeleteButton hideText size="small" recordItemId={record.id} />
+                  <EditButton hideText size="small" recordItemId={record.id} resource='frameworks'/>
+                  <DeleteButton hideText size="small" recordItemId={record.id} resource='frameworks'/>
                 </Space>
               )}
             />

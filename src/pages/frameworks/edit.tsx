@@ -10,7 +10,9 @@ export const FrameworkEdit = () => {
   const [loading, setLoading] = useState(false);
   const { id } = useParams();
   const { formProps, saveButtonProps, form, queryResult } = useForm({
+    resource: "frameworks",
     id: id, // Tell Refine to fetch the record with this id
+    action: "edit",
   });
 
   const data = queryResult?.data?.data;
